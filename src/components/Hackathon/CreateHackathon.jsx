@@ -12,11 +12,13 @@ import TimePicker from "./TimePicker";
 import { useForm } from "react-hook-form";
 import getCities from "../../actions/LoginScreens/getCities";
 import getStates from "../../actions/LoginScreens/getStates";
-import getCreateHackathon from "../../actions/Dashboard/createHackathon";
-import getCreateHackathonWeb from "../../actions/Dashboard/createBannerWeb";
+import createHackathon from "../../actions/Dashboard/createHackathon";
+import createBannerWeb from "../../actions/Dashboard/createBannerWeb";
 import getSectors from "../../actions/MasterDataApi/getSectors";
 import getDifficultyLevel from "../../actions/MasterDataApi/getDifficultyLevel";
 import getLanguageList from "../../actions/MasterDataApi/getLanguageList";
+import getCourses from "../../actions/MasterDataApi/getCourses";
+
 import { useNavigate } from "react-router";
 
 const hours = [...Array(12).keys()].map((n) =>
@@ -26,21 +28,30 @@ const minutes = [...Array(60).keys()].map((n) => n.toString().padStart(2, "0"));
 const periods = ["AM", "PM"];
 
 function CreateHackathon() {
-  const { register, handleSubmit } = useForm();
+  // const { register, handleSubmit } = useForm();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [selectedState, setSelectedState] = useState("");
-  const [isFree, setIsFree] = useState(true);
-  const [amount, setAmount] = useState("");
+  // const [isFree, setIsFree] = useState(true);
+  // const [amount, setAmount] = useState("");
+  const { register, handleSubmit } = useForm();
   const [sector, setSector] = useState([]);
   const [difficultyLevel, setDifficultyLevel] = useState([]);
+  const [user, setUser] = useState({});
   const [language, setLanguage] = useState([]);
-  const navigate = useNavigate();
+  const [selectedTime, setSelectedTime] = useState(0);
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(0);
+
+  // const navigate = useNavigate();
 
   const preData = async () => {
     try {
       const indianStates = await getStates();
       setStates(indianStates?.data?.states);
+      const allCourses = await getCourses();
+      console.log(allCourses?.data?.courses);
+      setCourses(allCourses?.data?.courses);
     } catch (error) {
       console.log(
         "Error while getting highest qualification or states :: ",
@@ -49,11 +60,11 @@ function CreateHackathon() {
     }
   };
 
-  const getCitiesHandler = async (id_state) => {
+  const getCitiesHandler = async (id) => {
     try {
-      console.log("Id :: ", id_state);
+      console.log("Id :: ", id);
       const data = {
-        id_state: id_state,
+        id_state: id,
       };
       const response = await getCities(data);
       setDistricts(response?.data?.cities);
@@ -64,51 +75,57 @@ function CreateHackathon() {
   };
 
   const handleStateChange = (e) => {
-    setSelectedState(e.target.value);
-    getCitiesHandler(e.target.value);
-    console.log("State :: ", e.target.value);
+    const stateId = e.target.value;
+    console.log(stateId);
+    setSelectedState(stateId);
+    getCitiesHandler(stateId);
+    console.log("State :: ", stateId);
   };
 
-  const CreateHackathonHandler = async (formData) => {
-    try {
-      console.log("form data is ", formData);
-      const data = {
-        hackthon_title: formData?.addTitle,
-        id_industry: formData?.Industry,
-        amount: isFree ? 0 : formData.Rs,
-        // file: formData?.chooseFile,
-        id_level_difficulty: formData?.level,
-        id_sector: formData?.sector,
-        id_lang: formData?.language,
-        id_state: selectedState,
-        id_city: formData?.district,
-        file: formData?.chooseFile,
-      };
-      await getCreateHackathon(data);
-    } catch (error) {
-      console.log("Error while logging with formData :: ", error);
-    }
+  const handleCourseChange = (e) => {
+    const courseId = e.target.value;
+    console.log(courseId);
+    setSelectedCourse(courseId);
   };
 
-  const CreateHackathonWebBannerHandler = async (formData) => {
-    try {
-      console.log("form data is ", formData);
-      const data = {
-        banner_title: formData?.bannerTitle,
-        id_banner_size: formData?.bannerSize,
-        // file: formData?.chooseFile,
-        banner_description: formData?.description,
-      };
-      await getCreateHackathonWeb(data);
-    } catch (error) {
-      console.log("Error while logging with formData :: ", error);
-    }
-  };
+  // const createHackathonHandler = async (formData) => {
+  // 	try {
+  // 		console.log("form data is ", formData);
+  // 		const data = {
+  // 			hackthon_title: formData?.addTitle,
+  // 			id_industry: formData?.Industry,
+  // 			amount: isFree ? 0 : formData.Rs,
+  // 			file: formData?.chooseFile,
+  // 			id_level_difficulty: formData?.level,
+  // 			id_sector: formData?.sector,
+  // 			id_lang: formData?.language,
+  // 			id_state: selectedState,
+  // 			id_city: formData?.district,
+  // 		};
+  // 		console.log(file);
+  // 		await getCreateHackathon(data);
+  // 	} catch (error) {
+  // 		console.log("Error while logging with formData :: ", error);
+  // 	}
+  // };
+
+  // const CreateHackathonWebBannerHandler = async (formData) => {
+  // 	try {
+  // 		console.log("form data is ", formData);
+  // 		const data = {
+  // 			banner_title: formData?.bannerTitle,
+  // 			id_banner_size: formData?.bannerSize,
+  // 			file: formData?.chooseFile,
+  // 			banner_description: formData?.description,
+  // 		};
+  // 		await getCreateHackathonWeb(data);
+  // 	} catch (error) {
+  // 		console.log("Error while logging with formData :: ", error);
+  // 	}
+  // };
 
   const getSectorData = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log("User :: ", user);
       const data = {
         usercode: user?.usercode,
         id_self_student: 1,
@@ -125,8 +142,6 @@ function CreateHackathon() {
 
   const getDifficultyLevelData = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log("User :: ", user);
       const response = await getDifficultyLevel();
       console.log("Sector data", response);
       if (response?.data?.code === 1000) setDifficultyLevel(response?.data?.dl);
@@ -150,6 +165,62 @@ function CreateHackathon() {
       setErrors([error.message]);
     }
   };
+
+  const createHackathonHandler = async (formData) => {
+    console.log(formData);
+    console.log(selectedTime);
+    console.log(user);
+    try {
+      const data = {
+        exam_start_time: formData?.hackathonTime + ":00",
+        paid: formData?.planType === "paid" ? 1 : 0,
+        amount: Number(formData?.amount) || 0,
+        id_course: Number(formData?.course),
+        hackthon_title: formData?.title,
+        id_level_difficulty: Number(formData?.level),
+        id_corp: user?.id,
+        id_lang: Number(formData?.language),
+        negative: formData?.negative === "yes" ? 1 : 0,
+        id_state: Number(selectedState),
+        id_city: Number(formData?.district),
+        id_sector: Number(formData?.sector),
+        date_of_exam: formData?.examDate,
+        passing_percentage: Number(formData?.passPercent),
+        usercode: user?.token,
+        file: formData?.companyLogo[0],
+      };
+
+      // Create Hackathon
+      console.log(data);
+      const response = await createHackathon(data);
+      console.log(response);
+
+      // Create Banner
+      const bannerData = {
+        id_corp: "",
+        display_start_time: "",
+        display_end_time: "",
+        display_start_date: "",
+        display_end_date: "",
+        banner_title: "",
+        Id_banner_size: "",
+        id_hackthon: "",
+        usercode: "",
+        banner_description: "",
+        file: "",
+      };
+      console.log(bannerData);
+      const res = await createBannerWeb(bannerData);
+      console.log(res);
+    } catch (error) {
+      console.log("Error while creating hackathon :: ", error);
+    }
+  };
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   useEffect(() => {
     preData();
@@ -184,15 +255,77 @@ function CreateHackathon() {
               </span>
               <img src={close} alt="" className="h-7" />
             </div>
-            <form onSubmit={handleSubmit(CreateHackathonHandler)}>
-              <div className="flex ">
-                <img src={twoperson} alt="" className="h-5 w-5" />
-                <input
-                  type="text"
-                  placeholder="Add title"
-                  className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                  {...register("addTitle")}
-                />
+            <form onSubmit={handleSubmit(createHackathonHandler)}>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Add title"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("title")}
+                  />
+                </div>
+                <div className="relative h-15 mb-3 flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <select
+                    id_state="sector_select"
+                    className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                    {...register("course")}
+                  >
+                    <option value="">Select Course</option>
+                    {courses?.map((data) => (
+                      <option key={data?.id} value={data.id}>
+                        {data.course_name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="date"
+                    placeholder="Add Date of Exam"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("examDate")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="time"
+                    placeholder="Add Hackathon Time"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("hackathonTime")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="number"
+                    placeholder="Add Passing Percentage"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full no-spinner"
+                    {...register("passPercent")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src={twoperson}
+                    alt="Two Person Icon"
+                    className="h-5 w-5"
+                  />
+                  <select
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full no-spinner"
+                    {...register("negative")}
+                  >
+                    <option value="">Negative</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
               </div>
               <div className="flex items-center w-2/3 justify-between mt-6 mb-6">
                 <div className="flex items-center mb-4 gap-3">
@@ -202,8 +335,7 @@ function CreateHackathon() {
                     value="free"
                     name="value"
                     className="w-4 h-4 text-blue-600"
-                    checked={isFree}
-                    onChange={() => setIsFree(true)}
+                    {...register("planType")}
                   />
                   <label
                     for="default-radio-1"
@@ -217,10 +349,9 @@ function CreateHackathon() {
                     id_state="paid"
                     type="radio"
                     value="paid"
-                    name="value"
+                    name="planType"
                     className="w-4 h-4 text-blue-600"
-                    checked={!isFree}
-                    onChange={() => setIsFree(false)}
+                    {...register("planType")}
                   />
                   <label
                     for="default-radio-1"
@@ -229,25 +360,24 @@ function CreateHackathon() {
                     Paid
                   </label>
                 </div>
-
-                {!isFree && (
-                  <div className="flex items-center justify-center">
+                {
+                  <div className="flex items-center justify-center ">
                     <input
-                      type="text"
-                      placeholder="Rs"
-                      className="px-7 border w-full py-3 rounded-md bg-[#EBEBEB66] outline-none"
-                      {...register("Rs")}
-                      onChange={(e) => setAmount(e.target.value)}
+                      type="number "
+                      placeholder="Rs. "
+                      className="px-7 no-spinner border-2 border-[#1C4481] w-full py-3 rounded-md bg-[#EBEBEB66] outline-none"
+                      {...register("amount")}
                     />
                   </div>
-                )}
+                }
               </div>
               <div className="flex flex-col gap-6">
                 <div className="bg-[#E7F0FF] px-4 py-2 rounded-md text-[#1C4481] font-medium">
                   <span>Add Banner</span>
                 </div>
+
                 <div className="flex w-4/5 justify-between ">
-                  <div>
+                  <div className="flex items-center gap-2">
                     <div className="flex mb-2">
                       <img src={bannertitle} alt="" className="h-4 w-5" />
                     </div>
@@ -259,8 +389,53 @@ function CreateHackathon() {
                     />
                   </div>
                   <div className="mt-5">
-                    <TimePicker />
+                    <TimePicker setSelectedTime={setSelectedTime} />
                   </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Add Description"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("description")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="date"
+                    placeholder="Add Display Start Date"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("display-start-time")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="time"
+                    placeholder="Add Display Start Time"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("display-start-time")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="date"
+                    placeholder="Add Display end Date"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("display-end-time")}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <img src={twoperson} alt="" className="h-5 w-5" />
+                  <input
+                    type="time"
+                    placeholder="Add Display End Time"
+                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    {...register("display-end-time")}
+                  />
                 </div>
                 <span className="font-medium">Banner Image</span>
                 <div className="flex justify-between w-4/5">
@@ -276,8 +451,6 @@ function CreateHackathon() {
                         <select
                           id_state="banner-size-selection"
                           className=" w-[400px] h-[70px]  border rounded-xl p-2 px-6 outline-none cursor-pointer "
-                          defaultValue=""
-                          {...register("bannerSize")}
                         >
                           <option value="">60x468 Px</option>
                           <option value="">90x728 Px</option>
@@ -291,23 +464,17 @@ function CreateHackathon() {
                     </span>
                   </div>
                   <div className="flex flex-col gap-1 mt-7">
-                    <div
-                      className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between"
-                      onClick={() =>
-                        document.getElementById("fileInput").click()
-                      }
-                    >
+                    <div className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between">
                       <span className="font-medium">Choose File</span>
                       <input
                         id_state="fileInput"
                         className="text-[#1C4481] outline-none text-sm"
                         type="file"
-                        hidden
-                        {...register("chooseFile")}
+                        {...register("banner")}
                       />
-                      <span className="text-[12px] text-[#A4A4A4]">
-                        Banner Size - 800x400px
-                      </span>
+                      {/* <span className="text-[12px] text-[#A4A4A4]">
+												Banner Size - 800x400px
+											</span> */}
                     </div>
                     <span className="text-[12px] text-[#848484]">
                       Supported formats PNG, JPEG and File size max.5 mb
@@ -323,10 +490,11 @@ function CreateHackathon() {
                   </div>
                   <input
                     type="text"
-                    className="flex w-[360px] h-[65px] border rounded-xl p-2 px-6 flex-col justify-center outline-none"
+                    className="flex w-[360px] h-[65px] text-[#1C4481] border rounded-xl p-2 px-6 flex-col justify-center outline-none"
+                    defaultValue={"Download Sample Banner"}
+                    disabled
                   />
                 </div>
-
                 <div>
                   <div className="flex mb-7">
                     <img src={edit} alt="" className="h-4 w-5" />
@@ -341,18 +509,17 @@ function CreateHackathon() {
                   />
                 </div>
               </div>
-
               <div className="flex mt-7 gap-16 ">
                 <div className="relative h-15 mb-3 w-1/3 mr-10">
                   <select
-                    id_state="qualification_select"
+                    id_state="difficulty_select"
                     className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
                     defaultValue=""
                     {...register("level")}
                   >
                     <option value="">Select Level</option>
                     {difficultyLevel?.map((data) => (
-                      <option key={data?.id_state} value={data.id_state}>
+                      <option key={data?.id} value={data.id}>
                         {data.level_difficulty_name}
                       </option>
                     ))}
@@ -363,9 +530,9 @@ function CreateHackathon() {
                 </div>
                 <div className="relative h-15 mb-3 w-1/3">
                   <select
-                    id_state="qualification_select"
+                    id_state="sector_select"
                     className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                    defaultValue=""
+                    // defaultValue=""
                     {...register("sector")}
                   >
                     <option value="">Select Sector</option>
@@ -383,14 +550,14 @@ function CreateHackathon() {
               <div className="flex mt-7 gap-16">
                 <div className="relative h-15 mb-3 w-1/3 mr-10">
                   <select
-                    id_state="qualification_select"
+                    id_state="language_select"
                     className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                    defaultValue=""
-                    {...register("level")}
+                    // defaultValue=""
+                    {...register("language")}
                   >
                     <option value="">Select Language</option>
                     {language?.map((data) => (
-                      <option key={data?.id_state} value={data?.id_state}>
+                      <option key={data?.id} value={data?.id}>
                         {data.lang_name}
                       </option>
                     ))}
@@ -401,10 +568,10 @@ function CreateHackathon() {
                 </div>
                 <div className="relative h-15 mb-3 w-1/3 mr-10">
                   <select
-                    id_state="qualification_select"
+                    id_state="state_select"
                     className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                    defaultValue=""
-                    {...register("level")}
+                    // defaultValue=""
+                    onChange={(e) => handleStateChange(e)}
                   >
                     <option value="">Select State</option>
                     {states?.map((data) => (
@@ -420,10 +587,10 @@ function CreateHackathon() {
               </div>
               <div className="relative h-15 mb-3 w-1/3 mr-10 mt-5">
                 <select
-                  id_state="qualification_select"
+                  id_state="level_select"
                   className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                  defaultValue=""
-                  {...register("level")}
+                  // defaultValue=""
+                  {...register("district")}
                 >
                   <option value="">Select City</option>
                   {districts?.map((district) => (
@@ -438,20 +605,17 @@ function CreateHackathon() {
               </div>
               <span className="font-custom text-lg ">Upload Company Logo</span>
               <div className="mb-7">
-                <div
-                  className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between"
-                  onClick={() => document.getElementById("fileInput").click()}
-                >
+                <div className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between">
                   <span className="font-medium">Choose File</span>
                   <input
                     id_state="fileInput"
                     className="text-[#1C4481] outline-none text-sm"
                     type="file"
-                    hidden
+                    {...register("companyLogo")}
                   />
-                  <span className="text-[12px] text-[#A4A4A4]">
-                    Banner Size - 800x400px
-                  </span>
+                  {/* <span className="text-[12px] text-[#A4A4A4]">
+										Banner Size - 800x400px
+									</span> */}
                 </div>
                 <span className="text-[12px] text-[#848484]">
                   Supported formats PNG, JPEG and File size max.5 mb
