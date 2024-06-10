@@ -76,7 +76,7 @@ function CreateHackathon() {
         hackthon_title: formData?.addTitle,
         id_industry: formData?.Industry,
         amount: isFree ? 0 : formData.Rs,
-        file: formData?.chooseFile,
+        // file: formData?.chooseFile,
         id_level_difficulty: formData?.level,
         id_sector: formData?.sector,
         id_lang: formData?.language,
@@ -96,7 +96,7 @@ function CreateHackathon() {
       const data = {
         banner_title: formData?.bannerTitle,
         id_banner_size: formData?.bannerSize,
-        file: formData?.chooseFile,
+        // file: formData?.chooseFile,
         banner_description: formData?.description,
       };
       await getCreateHackathonWeb(data);
