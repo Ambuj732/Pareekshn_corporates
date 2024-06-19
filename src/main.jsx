@@ -29,6 +29,8 @@ import UnpostedJob from "./components/Hackathon/UnpostedJob.jsx";
 import AppliesCandidate from "./components/Hackathon/AppliesCandidate.jsx";
 import CreateNewJob from "./components/Hackathon/CreateNewJob.jsx";
 import CreateJob from "./components/Hackathon/CreateJob.jsx";
+import EditDashboardCorporateProfile from "./components/Hackathon/EditDashboardCorporateProfile.jsx";
+import AddDocument from "./components/Hackathon/AddDocument.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -56,6 +58,10 @@ const router = createBrowserRouter(
         path="/dashboard/corporate-profile"
         element={<DashboardCorporateProfile />}
       ></Route>
+      <Route
+        path="/edit-profile"
+        element={<EditDashboardCorporateProfile />}
+      ></Route>
       <Route path="/dashboard/postedjob" element={<PostedJob />}></Route>
       <Route path="/dashboard/jobspost" element={<UnpostedJob />}></Route>
       <Route path="/dashboard/createnewjob" element={<CreateNewJob />}></Route>
@@ -76,6 +82,11 @@ const router = createBrowserRouter(
       <Route path="/rejected-hackathon" element={<RejectedHackathon />}></Route>
       <Route path="/pending-hackathon" element={<PendingHackathon />}></Route>
       <Route path="/next-hackathon" element={<NextHackathon />}></Route>
+      <Route
+        path="/corporate-profile"
+        element={<DashboardCorporateProfile />}
+      ></Route>
+      <Route path="/add-documents" element={<AddDocument />}></Route>
     </Route>
   )
 );

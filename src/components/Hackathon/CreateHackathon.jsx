@@ -88,41 +88,41 @@ function CreateHackathon() {
     setSelectedCourse(courseId);
   };
 
-  // const createHackathonHandler = async (formData) => {
-  // 	try {
-  // 		console.log("form data is ", formData);
-  // 		const data = {
-  // 			hackthon_title: formData?.addTitle,
-  // 			id_industry: formData?.Industry,
-  // 			amount: isFree ? 0 : formData.Rs,
-  // 			file: formData?.chooseFile,
-  // 			id_level_difficulty: formData?.level,
-  // 			id_sector: formData?.sector,
-  // 			id_lang: formData?.language,
-  // 			id_state: selectedState,
-  // 			id_city: formData?.district,
-  // 		};
-  // 		console.log(file);
-  // 		await getCreateHackathon(data);
-  // 	} catch (error) {
-  // 		console.log("Error while logging with formData :: ", error);
-  // 	}
-  // };
+  const CreateHackathonHandler = async (formData) => {
+    try {
+      console.log("form data is ", formData);
+      const data = {
+        hackthon_title: formData?.addTitle,
+        id_industry: formData?.Industry,
+        amount: isFree ? 0 : formData.Rs,
+        file: formData?.chooseFile,
+        id_level_difficulty: formData?.level,
+        id_sector: formData?.sector,
+        id_lang: formData?.language,
+        id_state: selectedState,
+        id_city: formData?.district,
+        file: formData?.chooseFile,
+      };
+      await getCreateHackathon(data);
+    } catch (error) {
+      console.log("Error while logging with formData :: ", error);
+    }
+  };
 
-  // const CreateHackathonWebBannerHandler = async (formData) => {
-  // 	try {
-  // 		console.log("form data is ", formData);
-  // 		const data = {
-  // 			banner_title: formData?.bannerTitle,
-  // 			id_banner_size: formData?.bannerSize,
-  // 			file: formData?.chooseFile,
-  // 			banner_description: formData?.description,
-  // 		};
-  // 		await getCreateHackathonWeb(data);
-  // 	} catch (error) {
-  // 		console.log("Error while logging with formData :: ", error);
-  // 	}
-  // };
+  const CreateHackathonWebBannerHandler = async (formData) => {
+    try {
+      console.log("form data is ", formData);
+      const data = {
+        banner_title: formData?.bannerTitle,
+        id_banner_size: formData?.bannerSize,
+        file: formData?.chooseFile,
+        banner_description: formData?.description,
+      };
+      await getCreateHackathonWeb(data);
+    } catch (error) {
+      console.log("Error while logging with formData :: ", error);
+    }
+  };
 
   const getSectorData = async () => {
     try {

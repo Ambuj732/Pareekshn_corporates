@@ -11,6 +11,7 @@ function CorporateHackathonSidebar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuOpen1, setIsMenuOpen1] = useState(false);
   const [isMenuOpen2, setIsMenuOpen2] = useState(false);
+  const [isMenuOpen3, setIsMenuOpen3] = useState(false);
   const navigate = useNavigate();
 
   const handelLogout = () => {
@@ -30,12 +31,36 @@ function CorporateHackathonSidebar() {
               <span className="font-semibold">Dashboard</span>
             </div>
           </Link>
-          <Link to={"/dashboard/corporate-profile"}>
-            <div className="flex items-center w-4/5 h-12s cursor-pointer rounded-e-full text-white gap-2 py-2 px-4">
-              <img src={user} alt="" />
-              <span className="">Profile</span>
+          <div
+            onClick={() => {
+              const open = isMenuOpen3;
+              setIsMenuOpen3(!open);
+            }}
+            className="flex items-center cursor-pointer w-4/5 h-12 rounded-e-full text-white gap-2 py-2 px-4"
+          >
+            <img src={stat} alt="" />
+            <span className="">Profile</span>
+          </div>
+          {isMenuOpen3 && (
+            <div className="flex flex-col items-center">
+              <Link to={"/corporate-profile"} className="w-4/5 h-12">
+                <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
+                  <div className="flex items-center gap-2">
+                    <img src={user} alt="" />
+                    <span className="">My Profile</span>
+                  </div>
+                </div>
+              </Link>
+              <Link to={"/add-documents"} className="w-4/5 h-12">
+                <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
+                  <div className="flex items-center gap-2">
+                    <img src={user} alt="" />
+                    <span className="">Add Document</span>
+                  </div>
+                </div>
+              </Link>
             </div>
-          </Link>
+          )}
           <div
             onClick={() => {
               const open = isMenuOpen;

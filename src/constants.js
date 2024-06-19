@@ -1,4 +1,4 @@
-const PUBLIC_REST_API_ENDPOINT = String("http://103.35.121.219:1337");
+const PUBLIC_REST_API_ENDPOINT = String("http://164.52.205.145:1337");
 const BEARER_TOKEN = String(
   "qDJhbGciOiJIUzI1NiJ9.e30.ZRrHA1JJJW8opsbCGfG_HACGpVUMN_a9IV7pAx_Zdrt56FrtNv"
 );
