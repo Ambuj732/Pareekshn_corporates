@@ -31,6 +31,8 @@ import CreateNewJob from "./components/Hackathon/CreateNewJob.jsx";
 import CreateJob from "./components/Hackathon/CreateJob.jsx";
 import EditDashboardCorporateProfile from "./components/Hackathon/EditDashboardCorporateProfile.jsx";
 import AddDocument from "./components/Hackathon/AddDocument.jsx";
+import AddEmployee from "./components/Hackathon/AddEmployee.jsx";
+import ProfileOverview from "./components/Hackathon/ProfileOverview.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -87,6 +89,8 @@ const router = createBrowserRouter(
         element={<DashboardCorporateProfile />}
       ></Route>
       <Route path="/add-documents" element={<AddDocument />}></Route>
+      <Route path="/add-employee" element={<AddEmployee />}></Route>
+      <Route path="/profile-overview" element={<ProfileOverview />}></Route>
     </Route>
   )
 );
