@@ -4,6 +4,7 @@ import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
 import { useForm } from "react-hook-form";
 import addDocumentWeb from "../../actions/Dashboard/addDocumentWeb";
 import fetchAllDocument from "../../actions/Dashboard/fetchAllDocument";
+import attach from "../../assets/Hackathon/attach.png";
 
 const AddDocument = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -68,19 +69,19 @@ const AddDocument = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen flex   overflow-hidden">
+    <div className="w-screen h-screen flex overflow-hidden">
       <CorporateHackathonSidebar />
 
       <div className="bg-[#EDF2FF] min-h-screen w-screen m-3 flex  rounded-3xl">
-        <div className="bg-white min-h-screen  flex justify-center items-center gap-6  w-full m-7 rounded-3xl">
-          <div className="w-[39%] h-[70%] border rounded-2xl shadow-lg">
-            <div className="bg-white border w-full h-16">
+        <div className="bg-white min-h-screen flex items-center  gap-6  w-full m-7 rounded-3xl">
+          <div className="w-[39%] h-[70%] mx-10">
+            {/* <div className="bg-white  w-full h-16">
               <div className="flex gap-10 items-center mt-4 mx-4">
                 <span className="text-black font-custom font-medium">
                   Document
                 </span>
               </div>
-            </div>
+            </div> */}
             <div className="flex flex-col ml-4 ">
               <span className="font-custom font-medium">Documents</span>
               <span className="font-custom text-gray-500">
@@ -91,7 +92,7 @@ const AddDocument = () => {
               onSubmit={handleSubmit(formSubmitHandler)}
               className="p-4 max-w-lg mx-auto"
             >
-              <div className="mb-4">
+              <div className="mb-7">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="documentType"
@@ -100,7 +101,7 @@ const AddDocument = () => {
                 </label>
                 <select
                   id="documentType"
-                  className="block w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="block pl-2 pb-2.5 pt-5 w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
                   {...register("document_type")}
                 >
                   <option value="">Select Document Type</option>
@@ -110,7 +111,7 @@ const AddDocument = () => {
                 </select>
               </div>
 
-              <div className="mb-4">
+              <div className="mb-7">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="documentId"
@@ -120,21 +121,22 @@ const AddDocument = () => {
                 <input
                   type="text"
                   id="documentId"
-                  className="block w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
                   placeholder="Document Number/ID"
                   {...register("document_number")}
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-7">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="attachment"
                 >
                   Attachment
                 </label>
-                <div className="relative w-full h-12 border border-gray-300 rounded-md flex items-center justify-between px-3 shadow-sm">
-                  <span className="text-gray-500"></span>
+                <div className="relative w-full h-12 p-2 pt-5 border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
+                  <img src={attach} className="w-5 h-5" />
+                  <span className="text-gray-500">attachment</span>
                   <input
                     type="file"
                     id="attachment"
@@ -156,7 +158,7 @@ const AddDocument = () => {
                 </div>
               )}
 
-              <div className="flex justify-center mt-6">
+              <div className="flex justify-center mt-14">
                 <button
                   type="submit"
                   className="bg-blue-900 text-white px-36 py-3 rounded-full focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -166,7 +168,10 @@ const AddDocument = () => {
               </div>
             </form>
           </div>
-          <div className="w-[35%] h-56 overflow-y-scroll bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
+
+          <div className=" border-black border my-28  h-[600px]"></div>
+
+          <div className="w-[35%] -mt-56 mx-10 h-72 overflow-y-scroll bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
             <div className="bg-white text-white py-2 px-4 text-center">
               <h2 className="text-lg text-black font-semibold">
                 Uploaded Docs

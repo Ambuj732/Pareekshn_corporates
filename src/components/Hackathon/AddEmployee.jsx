@@ -1,21 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import twoperson from "../../assets/Hackathon/twoperson.png";
 import edits from "../../assets/Hackathon/edits.png";
-
+import attach from "../../assets/Hackathon/attach.png";
+import addEmployee from "../../actions/Dashboard/addEmployee";
+import getAddEmployee from "../../actions/Dashboard/getAddEmployee";
 const AddEmployee = () => {
   const { register, handleSubmit } = useForm();
+  const [employee, setEmployee] = useState([]);
   const [errors, setErrors] = useState(null);
+
+  const addEmployeeHandler = async (formData) => {
+    setErrors([]);
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("data is", formData);
+      const file = formData?.attachment;
+
+      const data = {
+        id_corp: user?.id,
+        usercode: user?.token,
+        emp_name: formData?.employee_name,
+        emp_designation: formData?.designation,
+        about_emp: formData?.description,
+        attachment: 1,
+        req_by: 1,
+        file: file,
+      };
+
+      console.log(data);
+      await addEmployee(data);
+      console.log(data);
+    } catch (error) {
+      setErrors([error.message]);
+    }
+  };
+
+  const getAllEmployee = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const data = {
+        id_corp: user.id,
+        usercode: user?.token,
+      };
+      const response = await getAddEmployee(data);
+      if (response?.data?.code === 1000) {
+        setEmployee(response?.data?.about_us.about_emp);
+        console.log("Employee", employee);
+      }
+    } catch (error) {
+      setErrors([error.message]);
+    }
+  };
+  useEffect(() => {
+    getAllEmployee();
+  }, []);
   return (
     <div className="w-screen h-screen flex   overflow-hidden">
       <CorporateHackathonSidebar />
 
       <div className="bg-[#EDF2FF] min-h-screen w-screen m-3 flex  rounded-3xl">
-        <div className="bg-white min-h-screen  flex justify-center items-center gap-6  w-full m-7 rounded-3xl">
-          <div className="w-[39%] h-[80%] border rounded-2xl shadow-lg">
-            <div className="bg-white border w-full h-16">
+        <div className="bg-white min-h-screen  flex items-center gap-6  w-full m-7 rounded-3xl">
+          <div className="w-[39%] h-[80%] mx-10">
+            <div className="bg-white  w-full h-16">
               <div className="flex gap-10 items-center mt-4 mx-4">
                 <span className="text-black font-custom font-medium">
                   Team Members
@@ -28,7 +77,10 @@ const AddEmployee = () => {
                 Add your Employee info
               </span>
             </div>
-            <form className="p-4 max-w-lg mx-auto">
+            <form
+              onSubmit={handleSubmit(addEmployeeHandler)}
+              className="p-4 max-w-lg mx-auto"
+            >
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -38,8 +90,8 @@ const AddEmployee = () => {
                 </label>
                 <input
                   type="text"
-                  id="documentId"
-                  className="block w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  id="floating_filled"
+                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
                   placeholder="Employee Name"
                   {...register("employee_name")}
                 />
@@ -54,7 +106,7 @@ const AddEmployee = () => {
                 <input
                   type="text"
                   id="documentId"
-                  className="block w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
                   placeholder="Designation"
                   {...register("designation")}
                 />
@@ -69,7 +121,7 @@ const AddEmployee = () => {
                 <input
                   type="text"
                   id="documentId"
-                  className="block w-full bg-white border border-gray-300 rounded-md  h-20 px-3 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="block pl-2 text-black pb-2.5 pt-7 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
                   placeholder="Description"
                   {...register("description")}
                 />
@@ -77,17 +129,18 @@ const AddEmployee = () => {
 
               <div className="mb-4">
                 <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
+                  className="block text-gray-700 text-sm font-bold mb-2 "
                   htmlFor="attachment"
                 >
                   Photo
                 </label>
-                <div className="relative w-full h-12 border border-gray-300 rounded-md flex items-center justify-between px-3 shadow-sm">
-                  <span className="text-gray-500"></span>
+                <div className="relative w-full h-12 p-2 border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
+                  <img src={attach} className="w-5 h-5" />
+                  <span className="text-gray-500">Attachment</span>
                   <input
                     type="file"
                     id="attachment"
-                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer  "
                     accept=".pdf, .jpg, .png"
                     {...register("attachment")}
                   />
@@ -97,7 +150,7 @@ const AddEmployee = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center mt-6">
+              <div className="flex justify-center mt-10">
                 <button
                   type="submit"
                   className="bg-blue-900 text-white px-36 py-3 rounded-full focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -107,87 +160,31 @@ const AddEmployee = () => {
               </div>
             </form>
           </div>
-          <div className="w-[39%] h-[80%] border flex flex-col justify-center items-center rounded-2xl shadow-lg">
-            <div className="border rounded-2xl flex flex-col mb-4 border-green-400 w-4/5 h-32 gap-7">
-              <div className="flex justify-between items-center ">
-                <div className="flex gap-5 justify-center items-center mx-4">
-                  <div className="border border-gray-500 rounded-full w-7 h-7">
-                    <img src={twoperson} />
+          <div className=" border-black border my-28  h-[600px]"></div>
+          <div className="w-[39%] h-[80%]  flex flex-col items-center overflow-y-scroll ">
+            {employee.length > 0 &&
+              employee?.map((data) => {
+                console.log(data);
+                return (
+                  <div className="border rounded-2xl flex flex-col mb-7 border-green-400 w-4/5 h-32 gap-4">
+                    <div className="flex justify-between items-center ">
+                      <div className="flex gap-5 justify-center items-center mx-4">
+                        <div className="border border-gray-500 rounded-full w-7 h-7">
+                          <img src={data.emp_image} />
+                        </div>
+                        <div className="flex flex-col">
+                          <span>{data.emp_name}</span>
+                          <span>{data.emp_designation}</span>
+                        </div>
+                      </div>
+                      <img src={edits} className="w-10 h-7" />
+                    </div>
+                    <div className="flex items-center mx-4">
+                      <span>{data.about_emp}</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span>Kuldeep bhutt</span>
-                    <span>Android Developer</span>
-                  </div>
-                </div>
-                <img src={edits} className="w-10 h-7" />
-              </div>
-              <div className="flex items-center justify-center mx-4">
-                <span>
-                  Description: 5 years plus in designing. developing and
-                  maintaining Page
-                </span>
-              </div>
-            </div>
-            <div className="border rounded-2xl flex flex-col mb-4 border-green-400 w-4/5 h-32 gap-7">
-              <div className="flex justify-between items-center ">
-                <div className="flex gap-5 justify-center items-center mx-4">
-                  <div className="border border-gray-500 rounded-full w-7 h-7">
-                    <img src={twoperson} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span>Kuldeep bhutt</span>
-                    <span>Android Developer</span>
-                  </div>
-                </div>
-                <img src={edits} className="w-10 h-7" />
-              </div>
-              <div className="flex items-center justify-center mx-4">
-                <span>
-                  Description: 5 years plus in designing. developing and
-                  maintaining Page
-                </span>
-              </div>
-            </div>
-            <div className="border rounded-2xl flex flex-col mb-4 border-green-400 w-4/5 h-32 gap-7">
-              <div className="flex justify-between items-center ">
-                <div className="flex gap-5 justify-center items-center mx-4">
-                  <div className="border border-gray-500 rounded-full w-7 h-7">
-                    <img src={twoperson} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span>Kuldeep bhutt</span>
-                    <span>Android Developer</span>
-                  </div>
-                </div>
-                <img src={edits} className="w-10 h-7" />
-              </div>
-              <div className="flex items-center justify-center mx-4">
-                <span>
-                  Description: 5 years plus in designing. developing and
-                  maintaining Page
-                </span>
-              </div>
-            </div>
-            <div className="border rounded-2xl flex flex-col border-green-400 w-4/5 h-32 gap-7">
-              <div className="flex justify-between items-center ">
-                <div className="flex gap-5 justify-center items-center mx-4">
-                  <div className="border border-gray-500 rounded-full w-7 h-7">
-                    <img src={twoperson} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span>Kuldeep bhutt</span>
-                    <span>Android Developer</span>
-                  </div>
-                </div>
-                <img src={edits} className="w-10 h-7" />
-              </div>
-              <div className="flex items-center justify-center mx-4">
-                <span>
-                  Description: 5 years plus in designing. developing and
-                  maintaining Page
-                </span>
-              </div>
-            </div>
+                );
+              })}
           </div>
         </div>
       </div>
