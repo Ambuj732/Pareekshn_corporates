@@ -9,7 +9,7 @@ const getFetchCreatedJob = async (data) => {
       )
       .join("&");
     const response = await axios.post(
-      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/job/getJobPosts?${queryString}`,
+      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/job/getCreatedJobPosts?${queryString}`,
       {},
       {
         headers: {

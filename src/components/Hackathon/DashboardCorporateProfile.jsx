@@ -33,6 +33,7 @@ function DashboardCorporateProfile() {
       };
       console.log("data is ", data);
       const response = await getCorporateProfileData(data);
+      console.log(response);
       if (response?.data?.code === 1000)
         setCorporateProfile(response?.data?.corp_profile);
     } catch (error) {

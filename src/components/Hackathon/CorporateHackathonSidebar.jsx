@@ -180,10 +180,7 @@ function CorporateHackathonSidebar() {
                   </div>
                 </div>
               </Link>
-              <Link
-                to={"/dashboard/hackathonstatistics"}
-                className="w-4/5 h-12"
-              >
+              <Link to={"/dashboard/jobstatistics"} className="w-4/5 h-12">
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />

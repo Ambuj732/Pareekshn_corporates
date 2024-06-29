@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import pen from "../../assets/Hackathon/pen.png";
-import start from "/start.png";
 import pack from "/pack.png";
 import duration from "/duration.png";
 import passcode from "/passcode.png";
 import code from "/code.png";
 import getFetchCreatedJob from "../../actions/Dashboard/getFetchCreatedJob";
+import getPublishJob from "../../actions/Dashboard/getPublishJob";
 import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
+import publishJobPost from "../../actions/Dashboard/publishJobPost";
 import { useNavigate } from "react-router";
-
 const PostedJob = () => {
   const [fetchCreatedJob, setFetchCreatedJob] = useState([]);
   const [errors, setErrors] = useState(null);
   const [postedPage, setPostedPage] = useState(false);
+  const [publishJobData, setPublishJobData] = useState([]);
   const navigate = useNavigate();
 
   const getFetchCreatedData = async () => {
@@ -20,12 +21,8 @@ const PostedJob = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       console.log("User :: ", user);
       const data = {
-        usercode: user?.usercode,
-        id_corp: 2,
-        // status: 0,
-        // password: 123456,
-        // os: "android",
-        // username: "Kool@Tech",
+        usercode: user?.token,
+        id_corp: user?.id,
       };
       const response = await getFetchCreatedJob(data);
       console.log("completed data", response);
@@ -38,12 +35,50 @@ const PostedJob = () => {
     }
   };
 
+  const getFetchPublishData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User :: ", user);
+      const data = {
+        usercode: user?.token,
+        id_corp: user?.id,
+      };
+      const response = await getPublishJob(data);
+      console.log("completed data", response);
+      if (response?.data?.code === 1000)
+        setPublishJobData(response?.data?.jobs);
+      console.log(response);
+    } catch (error) {
+      console.log("Error while getting data :: ", error);
+      setErrors([error.message]);
+    }
+  };
+
+  const publishJobHandler = async (id) => {
+    try {
+      console.log(id);
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User :: ", user);
+      const data = {
+        usercode: user?.token,
+        id_corp: user?.id,
+        id_job_post: id,
+      };
+      const response = await publishJobPost(data);
+      console.log("Publish Job Post data", response);
+    } catch (error) {
+      console.log("Error while Publishing Job :: ", error);
+      setErrors([error.message]);
+    }
+  };
+
   const goToPage = () => {
     navigate("/dashboard/appliescandidate");
   };
 
   useEffect(() => {
     getFetchCreatedData();
+    getFetchPublishData();
   }, []);
   return (
     <div className="h-screen flex overflow-hidden ">
@@ -90,8 +125,8 @@ const PostedJob = () => {
             Posted New Jobs
           </div>
         </div>
-        {fetchCreatedJob &&
-          fetchCreatedJob.map(
+        {publishJobData &&
+          publishJobData.map(
             (data) =>
               data.is_publish == true &&
               postedPage == true && (
@@ -176,8 +211,9 @@ const PostedJob = () => {
           )}
 
         {fetchCreatedJob &&
-          fetchCreatedJob.map(
-            (data) =>
+          fetchCreatedJob.map((data) => {
+            console.log(data);
+            return (
               data.is_publish == false &&
               postedPage == false && (
                 <>
@@ -203,8 +239,10 @@ const PostedJob = () => {
                           Edit
                           <img src={pen} className="w-5 h-5" />
                         </div>
-
-                        <button className="border p-2 px-8 rounded-3xl  text-white bg-blue-950">
+                        <button
+                          className="border p-2 px-8 rounded-3xl  text-white bg-blue-950"
+                          onClick={() => publishJobHandler(data?.id)}
+                        >
                           Publish Job
                         </button>
                       </div>
@@ -257,7 +295,8 @@ const PostedJob = () => {
                   </div>
                 </>
               )
-          )}
+            );
+          })}
       </div>
     </div>
   );

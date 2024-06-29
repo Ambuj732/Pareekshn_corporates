@@ -33,7 +33,7 @@ import EditDashboardCorporateProfile from "./components/Hackathon/EditDashboardC
 import AddDocument from "./components/Hackathon/AddDocument.jsx";
 import AddEmployee from "./components/Hackathon/AddEmployee.jsx";
 import ProfileOverview from "./components/Hackathon/ProfileOverview.jsx";
-
+import JobStatistics from "./components/Hackathon/JobStatistics.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
@@ -77,8 +77,8 @@ const router = createBrowserRouter(
         element={<HackathonStatistics />}
       ></Route>
       <Route
-        path="/dashboard/hackathonstatistics"
-        element={<HackathonStatistics />}
+        path="/dashboard/jobstatistics"
+        element={<JobStatistics />}
       ></Route>
       <Route path="/dashboard/postedjob" element={<PostedJob />}></Route>
       <Route path="/rejected-hackathon" element={<RejectedHackathon />}></Route>

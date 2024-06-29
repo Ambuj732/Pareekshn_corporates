@@ -2,25 +2,26 @@ import React, { useState, useEffect, useRef } from "react";
 import pen from "../../assets/Hackathon/pen.png";
 import Chart from "chart.js/auto";
 import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
-import getHackathonState from "../../actions/Dashboard/getHackathonState";
+import getJobPostState from "../../actions/Dashboard/getJobPostState";
 const HackathonStatistics = () => {
   const [states, setStates] = useState([]);
   const [errors, setErrors] = useState(null);
   const chartRef = useRef(null);
   const chartRefs = useRef(null);
-  const getStaticData = async () => {
+
+  const getJobStaticData = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       console.log("User :: ", user);
       const data = {
         usercode: user?.usercode,
         id_corp: 2,
-        start_date: "2024-05-03",
-        end_date: "2024-06-03",
+        start_date: "2024-04-03",
+        end_date: "2024-05-03",
       };
-      const response = await getHackathonState(data);
+      const response = await getJobPostState(data);
       console.log("completed data", response);
-      if (response?.data?.code === 1000) setStates(response?.data?.hackathons);
+      if (response?.data?.code === 1000) setStates(response?.data?.jobs);
       console.log(response);
     } catch (error) {
       console.log("Error while getting data :: ", error);
@@ -29,14 +30,14 @@ const HackathonStatistics = () => {
   };
 
   useEffect(() => {
-    getStaticData();
+    getJobStaticData();
   }, []);
 
   useEffect(() => {
     if (states.length > 0 && chartRef.current) {
       const ctx = chartRef.current.getContext("2d");
-      const enrolledStudents = states.map((data) => data.enrolled_student);
-      const passedStudents = states.map((data) => data.passed_candidate);
+      const job = states.map((data) => data.job_title);
+      const appliedCandidate = states.map((data) => data.applied_candidate);
       const labels = states.map((data, index) => `Hackathon-${index + 1}`);
 
       new Chart(ctx, {
@@ -45,16 +46,15 @@ const HackathonStatistics = () => {
           labels: labels,
           datasets: [
             {
-              label: "Enrolled Students",
-              data: enrolledStudents,
+              label: "Jobs",
+              data: job,
               borderColor: "blue",
               borderWidth: 2,
               fill: false,
-              showLine: true,
             },
             {
-              label: "Passed Students",
-              data: passedStudents,
+              label: "Applied Candidate",
+              data: appliedCandidate,
               borderColor: "green",
               borderWidth: 2,
               fill: false,
@@ -85,7 +85,7 @@ const HackathonStatistics = () => {
   useEffect(() => {
     if (states.length > 0 && chartRefs.current) {
       const ctx = chartRefs.current.getContext("2d");
-      const enrolledStudents = states.map((data) => data.enrolled_student);
+      const appliedCandidate = states.map((data) => data.applied_candidate);
       const labels = states.map((data, index) => `Hackathon-${index + 1}`);
 
       new Chart(ctx, {
@@ -94,9 +94,9 @@ const HackathonStatistics = () => {
           labels: labels,
           datasets: [
             {
-              label: "Total No of Applicants",
-              data: enrolledStudents,
-              borderColor: "blue",
+              label: "Applied Candidate",
+              data: appliedCandidate,
+              borderColor: "green",
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(255, 159, 64, 0.2)",
@@ -107,7 +107,6 @@ const HackathonStatistics = () => {
                 "rgba(201, 203, 207, 0.2)",
               ],
               fill: false,
-              showLine: true,
               barThickness: 20,
             },
           ],
@@ -153,25 +152,29 @@ const HackathonStatistics = () => {
               <img src={pen} />
             </div>
           </div>
-          <table className="table-auto  h-[200px] p-2 border-2 ">
+          <table className="table-auto  h-[200px]  border-2">
             <thead>
               <tr className="bg-blue-300 text-#000000">
-                <th className="text-sm p-4">Past Hackathon</th>
-                <th className="text-sm p-4"> Total No of applicants</th>
-                <th className="text-sm p-4">
-                  Total No of applicants given exam
-                </th>
-                <th className="text-sm p-4"> Total No of applicants passed</th>
+                <th className="text-sm p-4">Job Title</th>
+                <th className="text-sm p-4">Industry</th>
+                <th className="text-sm p-4">Department</th>
+                <th className="text-sm p-4"> Experience Range</th>
+                <th className="text-sm p-4"> Salary Range</th>
+                <th className="text-sm p-4"> Applied Candidate</th>
               </tr>
             </thead>
             {states &&
               states.map((data) => (
                 <tbody className="border-b-[1px] border-blue-500">
                   <tr className="text-center">
-                    <td>1</td>
-                    <td>{data.enrolled_student}</td>
-                    <td>{data.attempted_candidate}</td>
-                    <td>{data.passed_candidate}</td>
+                    <td>{data.job_title}</td>
+                    <td>{data.industry_name}</td>
+                    <td>{data.department_name}</td>
+                    <td>{data.experience_range}</td>
+                    <td>
+                      {data.min_salary} to {data.max_salary}
+                    </td>
+                    <td>{data.applied_candidate}</td>
                   </tr>
                 </tbody>
               ))}

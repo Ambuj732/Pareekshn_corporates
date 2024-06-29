@@ -88,41 +88,41 @@ function CreateHackathon() {
     setSelectedCourse(courseId);
   };
 
-  const CreateHackathonHandler = async (formData) => {
-    try {
-      console.log("form data is ", formData);
-      const data = {
-        hackthon_title: formData?.addTitle,
-        id_industry: formData?.Industry,
-        amount: isFree ? 0 : formData.Rs,
-        file: formData?.chooseFile,
-        id_level_difficulty: formData?.level,
-        id_sector: formData?.sector,
-        id_lang: formData?.language,
-        id_state: selectedState,
-        id_city: formData?.district,
-        file: formData?.chooseFile,
-      };
-      await getCreateHackathon(data);
-    } catch (error) {
-      console.log("Error while logging with formData :: ", error);
-    }
-  };
+  // const CreateHackathonHandler = async (formData) => {
+  //   try {
+  //     console.log("form data is ", formData);
+  //     const data = {
+  //       hackthon_title: formData?.addTitle,
+  //       id_industry: formData?.Industry,
+  //       amount: isFree ? 0 : formData.Rs,
+  //       file: formData?.chooseFile,
+  //       id_level_difficulty: formData?.level,
+  //       id_sector: formData?.sector,
+  //       id_lang: formData?.language,
+  //       id_state: selectedState,
+  //       id_city: formData?.district,
+  //       file: formData?.chooseFile,
+  //     };
+  //     await getCreateHackathon(data);
+  //   } catch (error) {
+  //     console.log("Error while logging with formData :: ", error);
+  //   }
+  // };
 
-  const CreateHackathonWebBannerHandler = async (formData) => {
-    try {
-      console.log("form data is ", formData);
-      const data = {
-        banner_title: formData?.bannerTitle,
-        id_banner_size: formData?.bannerSize,
-        file: formData?.chooseFile,
-        banner_description: formData?.description,
-      };
-      await getCreateHackathonWeb(data);
-    } catch (error) {
-      console.log("Error while logging with formData :: ", error);
-    }
-  };
+  // const CreateHackathonWebBannerHandler = async (formData) => {
+  //   try {
+  //     console.log("form data is ", formData);
+  //     const data = {
+  //       banner_title: formData?.bannerTitle,
+  //       id_banner_size: formData?.bannerSize,
+  //       file: formData?.chooseFile,
+  //       banner_description: formData?.description,
+  //     };
+  //     await getCreateHackathonWeb(data);
+  //   } catch (error) {
+  //     console.log("Error while logging with formData :: ", error);
+  //   }
+  // };
 
   const getSectorData = async () => {
     try {
@@ -166,6 +166,21 @@ function CreateHackathon() {
     }
   };
 
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      // Define the onload event handler
+      reader.onload = () => resolve(reader.result);
+
+      // Define the onerror event handler
+      reader.onerror = (error) => reject(error);
+
+      // Read the file as a data URL
+      reader.readAsDataURL(file);
+    });
+  }
+
   const createHackathonHandler = async (formData) => {
     console.log(formData);
     console.log(selectedTime);
@@ -193,21 +208,27 @@ function CreateHackathon() {
       // Create Hackathon
       console.log(data);
       const response = await createHackathon(data);
+      const id_hackathon = response?.data?.id_hackathon;
+      console.log(id_hackathon);
       console.log(response);
+
+      const bannerImage = await fileToBase64(formData?.banner[0]);
+      console.log(bannerImage);
 
       // Create Banner
       const bannerData = {
-        id_corp: "",
-        display_start_time: "",
-        display_end_time: "",
-        display_start_date: "",
-        display_end_date: "",
-        banner_title: "",
-        Id_banner_size: "",
-        id_hackthon: "",
-        usercode: "",
-        banner_description: "",
-        file: "",
+        id_corp: user?.id,
+        display_start_time: "13:56:00",
+        display_end_time: "13:57:00",
+        display_start_date: "2024-05-22",
+        display_end_date: "2024-05-26",
+        banner_title: "banner 1st",
+        id_banner_size: 4,
+        id_hackthon: id_hackathon,
+        usercode: user?.token,
+        banner_description:
+          "description of banner. this is the baaner for this hackthon.",
+        file: bannerImage,
       };
       console.log(bannerData);
       const res = await createBannerWeb(bannerData);
@@ -407,7 +428,7 @@ function CreateHackathon() {
                     type="date"
                     placeholder="Add Display Start Date"
                     className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display-start-time")}
+                    {...register("display_start_date")}
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -416,7 +437,7 @@ function CreateHackathon() {
                     type="time"
                     placeholder="Add Display Start Time"
                     className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display-start-time")}
+                    {...register("display_start_time")}
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -425,7 +446,7 @@ function CreateHackathon() {
                     type="date"
                     placeholder="Add Display end Date"
                     className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display-end-time")}
+                    {...register("display_end_date")}
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -434,7 +455,7 @@ function CreateHackathon() {
                     type="time"
                     placeholder="Add Display End Time"
                     className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display-end-time")}
+                    {...register("display_end_time")}
                   />
                 </div>
                 <span className="font-medium">Banner Image</span>
@@ -467,9 +488,9 @@ function CreateHackathon() {
                     <div className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between">
                       <span className="font-medium">Choose File</span>
                       <input
+                        type="file"
                         id_state="fileInput"
                         className="text-[#1C4481] outline-none text-sm"
-                        type="file"
                         {...register("banner")}
                       />
                       {/* <span className="text-[12px] text-[#A4A4A4]">

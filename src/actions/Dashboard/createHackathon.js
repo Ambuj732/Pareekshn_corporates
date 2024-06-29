@@ -25,7 +25,7 @@ const getCreateHackathon = async (data) => {
     console.log(" Create Hackathon response :: ", response);
     return response;
   } catch (error) {
-    console.log("Error while logging in Create Job :: ", error);
+    console.log("Error while logging in Create Hackathon :: ", error);
     throw error;
   }
 };

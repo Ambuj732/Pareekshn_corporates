@@ -1,7 +1,7 @@
 import { PUBLIC_REST_API_ENDPOINT, BEARER_TOKEN } from "../../constants";
 import axios from "axios";
 
-const verifyEmailOTP = async (data) => {
+const publishJobPost = async (data) => {
   try {
     const queryString = Object.keys(data)
       .map(
@@ -9,7 +9,7 @@ const verifyEmailOTP = async (data) => {
       )
       .join("&");
     const response = await axios.post(
-      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/ChangeOtpVerify?${queryString}`,
+      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/job/publishJob?${queryString}`,
       {},
       {
         headers: {
@@ -17,12 +17,12 @@ const verifyEmailOTP = async (data) => {
         },
       }
     );
-    console.log("Email  otp response :: ", response);
+    console.log("Publish Job Post response :: ", response);
     return response;
   } catch (error) {
-    console.log("Error while logging in Fetch Email otp :: ", error);
+    console.log("Error while logging in Publish Job Post :: ", error);
     throw error;
   }
 };
 
-export default verifyEmailOTP;
+export default publishJobPost;

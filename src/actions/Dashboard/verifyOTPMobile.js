@@ -1,7 +1,7 @@
 import { PUBLIC_REST_API_ENDPOINT, BEARER_TOKEN } from "../../constants";
 import axios from "axios";
 
-const verifyEmailOTP = async (data) => {
+const verifyOTPMobile = async (data) => {
   try {
     const queryString = Object.keys(data)
       .map(
@@ -25,4 +25,4 @@ const verifyEmailOTP = async (data) => {
   }
 };
 
-export default verifyEmailOTP;
+export default verifyOTPMobile;

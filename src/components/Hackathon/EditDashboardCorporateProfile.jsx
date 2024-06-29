@@ -12,6 +12,8 @@ import updateCorporateProfile from "../../actions/Dashboard/updateCorporateProfi
 import updateUsernameAndUserId from "../../actions/Dashboard/updateUsernameAndUserId";
 import changeEmail from "../../actions/Dashboard/changeEmail";
 import verifyEmailOTP from "../../actions/Dashboard/verifyEmailOTP";
+import changeMobile from "../../actions/Dashboard/changeMobile";
+import verifyOTPMobile from "../../actions/Dashboard/verifyOTPMobile";
 const EditDashboardCorporateProfile = ({ closeModal }) => {
   const { register, handleSubmit } = useForm();
   const [states, setStates] = useState([]);
@@ -22,7 +24,7 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
   const [corporateStage, setCorporateStage] = useState([]);
   const [erros, setErrors] = useState(null);
   const [otpSent, setOtpSent] = useState(false);
-
+  const [otpSent2, setOtpSent2] = useState(false);
   const preData = async () => {
     try {
       const indianStates = await getStates();
@@ -155,8 +157,26 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
         type: 2,
       };
       await changeEmail(data);
-      console.log("Data", data);
+      console.log("Data:", data);
       setOtpSent(true);
+    } catch (error) {
+      console.log("Error while logging with formData :: ", error);
+    }
+  };
+  const changeMobileHandler = async (formData) => {
+    try {
+      console.log(formData);
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User :: ", user);
+      const data = {
+        id_corp: user?.id,
+        usercode: user?.token,
+        mobile: formData?.phoneNumber,
+        type: 1,
+      };
+      await changeMobile(data);
+      console.log("Data:", data);
+      setOtpSent2(true);
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
     }
@@ -170,13 +190,30 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
       const data = {
         id_corp: user?.id,
         usercode: user?.token,
-        email: formData?.corporate_email,
+        email: formData?.email,
         otp: formData?.otp,
       };
       console.log("Data", data);
       await verifyEmailOTP(data);
       console.log("Data", data);
-      setOtpSent(true);
+    } catch (error) {
+      console.log("Error while logging with formData :: ", error);
+    }
+  };
+  const handlePhoneOtpSubmit = async (formData) => {
+    try {
+      console.log(formData);
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User :: ", user);
+      const data = {
+        id_corp: user?.id,
+        usercode: user?.token,
+        mobile: formData?.phoneNumber,
+        otp: formData?.otp,
+      };
+      console.log("Data", data);
+      await verifyOTPMobile(data);
+      console.log("Data", data);
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
     }
@@ -431,7 +468,7 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
               type="submit"
               className="border rounded-3xl bg-blue-800 px-10 py-2"
             >
-              Update
+              Update2
             </button>
           </div>
         </form>
@@ -503,7 +540,80 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
                   type="submit"
                   className="border rounded-3xl bg-blue-800 px-10 mb-10 py-2"
                 >
-                  Update
+                  Update4
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+        <div>
+          <form onSubmit={handleSubmit(changeMobileHandler)}>
+            <div className="flex gap-5 px-5 mt-7 mb-7">
+              <div className="relative h-12 w-1/2">
+                <div>
+                  <input
+                    type="text"
+                    id="mobile_number"
+                    className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                    placeholder=""
+                    {...register("phoneNumber", {
+                      required: true,
+                    })}
+                  />
+                  <div
+                    htmlFor="email"
+                    className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                  >
+                    <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                    <label htmlFor="email" className="pl-2">
+                      Mobile Number
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center items-center mt-10">
+              <button
+                type="submit"
+                className="border rounded-3xl bg-blue-800 px-10 py-2"
+              >
+                Send OTP
+              </button>
+            </div>
+          </form>
+
+          {otpSent2 && (
+            <form onSubmit={handleSubmit(handlePhoneOtpSubmit)}>
+              <div className="flex px-5 mt-7 mb-7">
+                <div className="relative h-12 w-1/2">
+                  <div>
+                    <input
+                      type="text"
+                      id="otp"
+                      className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                      placeholder=""
+                      {...register("otp", {
+                        required: true,
+                      })}
+                    />
+                    <div
+                      htmlFor="otp"
+                      className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                    >
+                      <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                      <label htmlFor="otp" className="pl-2">
+                        Enter OTP
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center items-center mt-10">
+                <button
+                  type="submit"
+                  className="border rounded-3xl bg-blue-800 px-10 mb-10 py-2"
+                >
+                  Update3
                 </button>
               </div>
             </form>
