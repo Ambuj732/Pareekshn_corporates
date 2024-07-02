@@ -101,8 +101,8 @@ const AddDocument = () => {
                 </label>
                 <select
                   id="documentType"
-                  className="block pl-2 pb-2.5 pt-5 w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                  {...register("document_type")}
+                  className="block pl-2 h-14 w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer "
+                  {...register("document_type", { required: true })}
                 >
                   <option value="">Select Document Type</option>
                   <option value="pan">PAN</option>
@@ -121,9 +121,9 @@ const AddDocument = () => {
                 <input
                   type="text"
                   id="documentId"
-                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                  className="block pl-2 text-black  h-14 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
                   placeholder="Document Number/ID"
-                  {...register("document_number")}
+                  {...register("document_number", { required: true })}
                 />
               </div>
 
@@ -134,7 +134,7 @@ const AddDocument = () => {
                 >
                   Attachment
                 </label>
-                <div className="relative w-full h-12 p-2 pt-5 border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
+                <div className="relative w-full h-14  border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
                   <img src={attach} className="w-5 h-5" />
                   <span className="text-gray-500">attachment</span>
                   <input
@@ -142,7 +142,7 @@ const AddDocument = () => {
                     id="attachment"
                     className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                     accept=".pdf, .jpg, .png"
-                    {...register("attachment")}
+                    {...register("attachment", { required: true })}
                   />
                 </div>
                 <p className="text-gray-500 text-sm mt-1">
@@ -161,7 +161,7 @@ const AddDocument = () => {
               <div className="flex justify-center mt-14">
                 <button
                   type="submit"
-                  className="bg-blue-900 text-white px-36 py-3 rounded-full focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="bg-blue-900 text-white px-36 py-3 rounded-full "
                 >
                   Upload
                 </button>

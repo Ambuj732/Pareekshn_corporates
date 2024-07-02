@@ -9,6 +9,7 @@ import getPublishJob from "../../actions/Dashboard/getPublishJob";
 import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
 import publishJobPost from "../../actions/Dashboard/publishJobPost";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 const PostedJob = () => {
   const [fetchCreatedJob, setFetchCreatedJob] = useState([]);
   const [errors, setErrors] = useState(null);
@@ -98,7 +99,7 @@ const PostedJob = () => {
                 setPostedPage(true);
               }}
             >
-              Posted Jobs
+              Published Jobs
             </span>
           </div>
           <div
@@ -114,16 +115,18 @@ const PostedJob = () => {
                 setPostedPage(false);
               }}
             >
-              Unposted Jobs
+              Unpublished Jobs
             </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between px-4 mt-3 mb-7">
-          <span className="text-blue-600"> Posted Jobs</span>
-          <div className="  text-white border p-2 px-7 rounded-3xl bg-blue-800">
-            Posted New Jobs
-          </div>
+        <div className="flex items-center justify-end px-4 mt-3 mb-7">
+          {/* <span className="text-blue-600"> Published Jobs</span> */}
+          <Link to={"/dashboard/createnewjob"}>
+            <button className="  text-white border p-2 px-7 rounded-3xl bg-blue-800">
+              Posted New Jobs
+            </button>
+          </Link>
         </div>
         {publishJobData &&
           publishJobData.map(

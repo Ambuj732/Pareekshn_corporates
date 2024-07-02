@@ -5,6 +5,8 @@ import close from "../../assets/Hackathon/close.png";
 import twoperson from "../../assets/Hackathon/twoperson.png";
 import bannertitle from "../../assets/Hackathon/bannertitle.png";
 import arrowDown from "../../assets/Hackathon/arrowDown.png";
+import attach from "../../assets/Hackathon/attach.png";
+
 import time from "../../assets/Hackathon/time.png";
 import bannersize from "../../assets/Hackathon/bannersize.png";
 import edit from "../../assets/Hackathon/edit.png";
@@ -28,13 +30,10 @@ const minutes = [...Array(60).keys()].map((n) => n.toString().padStart(2, "0"));
 const periods = ["AM", "PM"];
 
 function CreateHackathon() {
-  // const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [selectedState, setSelectedState] = useState("");
-  // const [isFree, setIsFree] = useState(true);
-  // const [amount, setAmount] = useState("");
-  const { register, handleSubmit } = useForm();
   const [sector, setSector] = useState([]);
   const [difficultyLevel, setDifficultyLevel] = useState([]);
   const [user, setUser] = useState({});
@@ -42,8 +41,6 @@ function CreateHackathon() {
   const [selectedTime, setSelectedTime] = useState(0);
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(0);
-
-  // const navigate = useNavigate();
 
   const preData = async () => {
     try {
@@ -87,42 +84,6 @@ function CreateHackathon() {
     console.log(courseId);
     setSelectedCourse(courseId);
   };
-
-  // const CreateHackathonHandler = async (formData) => {
-  //   try {
-  //     console.log("form data is ", formData);
-  //     const data = {
-  //       hackthon_title: formData?.addTitle,
-  //       id_industry: formData?.Industry,
-  //       amount: isFree ? 0 : formData.Rs,
-  //       file: formData?.chooseFile,
-  //       id_level_difficulty: formData?.level,
-  //       id_sector: formData?.sector,
-  //       id_lang: formData?.language,
-  //       id_state: selectedState,
-  //       id_city: formData?.district,
-  //       file: formData?.chooseFile,
-  //     };
-  //     await getCreateHackathon(data);
-  //   } catch (error) {
-  //     console.log("Error while logging with formData :: ", error);
-  //   }
-  // };
-
-  // const CreateHackathonWebBannerHandler = async (formData) => {
-  //   try {
-  //     console.log("form data is ", formData);
-  //     const data = {
-  //       banner_title: formData?.bannerTitle,
-  //       id_banner_size: formData?.bannerSize,
-  //       file: formData?.chooseFile,
-  //       banner_description: formData?.description,
-  //     };
-  //     await getCreateHackathonWeb(data);
-  //   } catch (error) {
-  //     console.log("Error while logging with formData :: ", error);
-  //   }
-  // };
 
   const getSectorData = async () => {
     try {
@@ -274,249 +235,270 @@ function CreateHackathon() {
               <span className="text-xl font-medium text-[#1C4481]">
                 Create Hackathon
               </span>
-              <img src={close} alt="" className="h-7" />
             </div>
             <form onSubmit={handleSubmit(createHackathonHandler)}>
               <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="text"
-                    placeholder="Add title"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("title")}
-                  />
-                </div>
-                <div className="relative h-15 mb-3 flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <select
-                    id_state="sector_select"
-                    className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                    {...register("course")}
-                  >
-                    <option value="">Select Course</option>
-                    {courses?.map((data) => (
-                      <option key={data?.id} value={data.id}>
-                        {data.course_name}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
+                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="text"
+                        placeholder="Add title"
+                        className=" outline-none w-[90%] "
+                        {...register("title")}
+                      />
+                    </div>
+                  </div>
+                  <div className="h-16 w-1/2 border rounded-lg ">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <select
+                        id_state="sector_select"
+                        className=" outline-none w-[90%] mr-4 "
+                        {...register("course")}
+                      >
+                        <option value="">Select Course</option>
+                        {courses?.map((data) => (
+                          <option key={data?.id} value={data.id}>
+                            {data.course_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="h-16 w-1/2 border rounded-lg ">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="date"
+                        placeholder="Add Date of Exam"
+                        className=" outline-none w-[90%] mr-4 "
+                        {...register("examDate")}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="date"
-                    placeholder="Add Date of Exam"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("examDate")}
-                  />
+
+                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="time"
+                        placeholder="Add Hackathon Time"
+                        className=" outline-none w-[90%] mr-4"
+                        {...register("hackathonTime")}
+                      />
+                    </div>
+                  </div>
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="Number"
+                        placeholder="Add Passing Percentage"
+                        className=" outline-none w-[90%] "
+                        {...register("passPercent")}
+                      />
+                    </div>
+                  </div>
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img
+                        src={twoperson}
+                        alt="Two Person Icon"
+                        className="h-5 w-5 ml-4"
+                      />
+                      <select
+                        className=" outline-none w-[90%] mr-4 "
+                        {...register("negative")}
+                      >
+                        <option value="">Negative</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="time"
-                    placeholder="Add Hackathon Time"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("hackathonTime")}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="number"
-                    placeholder="Add Passing Percentage"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full no-spinner"
-                    {...register("passPercent")}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <img
-                    src={twoperson}
-                    alt="Two Person Icon"
-                    className="h-5 w-5"
-                  />
-                  <select
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full no-spinner"
-                    {...register("negative")}
-                  >
-                    <option value="">Negative</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex items-center w-2/3 justify-between mt-6 mb-6">
-                <div className="flex items-center mb-4 gap-3">
-                  <input
-                    id_state="free"
-                    type="radio"
-                    value="free"
-                    name="value"
-                    className="w-4 h-4 text-blue-600"
-                    {...register("planType")}
-                  />
-                  <label
-                    for="default-radio-1"
-                    className="ms-2 text-lg text-semibold"
-                  >
-                    free
-                  </label>
-                </div>
-                <div className="flex items-center mb-4 gap-3">
-                  <input
-                    id_state="paid"
-                    type="radio"
-                    value="paid"
-                    name="planType"
-                    className="w-4 h-4 text-blue-600"
-                    {...register("planType")}
-                  />
-                  <label
-                    for="default-radio-1"
-                    className="ms-2 text-lg text-semibold"
-                  >
-                    Paid
-                  </label>
-                </div>
-                {
-                  <div className="flex items-center justify-center ">
+
+                <div className="flex items-center w-2/3 justify-start gap-20 px-5 mt-6 mb-6">
+                  <div className="flex items-center mb-4 gap-3">
                     <input
-                      type="number "
-                      placeholder="Rs. "
-                      className="px-7 no-spinner border-2 border-[#1C4481] w-full py-3 rounded-md bg-[#EBEBEB66] outline-none"
-                      {...register("amount")}
+                      id_state="free"
+                      type="radio"
+                      value="free"
+                      name="value"
+                      className="w-4 h-4 text-blue-600"
+                      {...register("planType")}
                     />
+                    <label
+                      for="default-radio-1"
+                      className="ms-2 text-lg text-semibold"
+                    >
+                      Free
+                    </label>
                   </div>
-                }
+                  <div className="flex items-center mb-4 gap-3">
+                    <input
+                      id_state="paid"
+                      type="radio"
+                      value="paid"
+                      name="planType"
+                      className="w-4 h-4 text-blue-600"
+                      {...register("planType")}
+                    />
+                    <label
+                      for="default-radio-1"
+                      className="ms-2 text-lg text-semibold"
+                    >
+                      Paid
+                    </label>
+                  </div>
+                  {
+                    <div className="flex items-center justify-center ">
+                      <input
+                        type="number "
+                        placeholder="Rs. "
+                        className="px-7 no-spinner border-2 border-[#1C4481] w-full py-3 rounded-md bg-[#EBEBEB66] outline-none"
+                        {...register("amount")}
+                      />
+                    </div>
+                  }
+                </div>
               </div>
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4 mt-2">
                 <div className="bg-[#E7F0FF] px-4 py-2 rounded-md text-[#1C4481] font-medium">
                   <span>Add Banner</span>
                 </div>
 
-                <div className="flex w-4/5 justify-between ">
-                  <div className="flex items-center gap-2">
-                    <div className="flex mb-2">
-                      <img src={bannertitle} alt="" className="h-4 w-5" />
+                <div className="flex gap-10 justify-around px-5 mt-4 mb-4">
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={bannertitle} alt="" className="h-4 w-5 ml-4" />
+                      <input
+                        type="text"
+                        placeholder="Banner Title"
+                        className=" outline-none w-[90%] "
+                        {...register("bannerTitle")}
+                      />
                     </div>
-                    <input
-                      type="text"
-                      className="flex w-[350px] h-[65px] border rounded-xl p-2 px-6 flex-col justify-center outline-none"
-                      placeholder=" Banner Title"
-                      {...register("bannerTitle")}
-                    />
                   </div>
-                  <div className="mt-5">
+                  <div className="">
                     <TimePicker setSelectedTime={setSelectedTime} />
                   </div>
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="date"
+                        placeholder="Add Display Start Date"
+                        className=" outline-none w-[90%] mr-4"
+                        {...register("display_start_date")}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="text"
+
+                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="time"
+                        placeholder="Add Display Start Time"
+                        className=" outline-none w-[90%] mr-4 "
+                        {...register("display_start_time")}
+                      />
+                    </div>
+                  </div>
+
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="date"
+                        placeholder="Add Display end Date"
+                        className=" outline-none w-[90%] mr-4"
+                        {...register("display_end_date")}
+                      />
+                    </div>
+                  </div>
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 items-center">
+                      <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
+                      <input
+                        type="time"
+                        placeholder="Add Display End Time"
+                        className=" outline-none w-[90%] mr-4"
+                        {...register("display_end_time")}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className=" mt-2 mb-4 h-32 w-2/5 ">
+                  <textarea
                     placeholder="Add Description"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
+                    className="block pl-2  pb-2.5 pt-5 text-base border focus:outline-none focus:ring-0 peer items-center mx-4 px-5 mt-2 mb-4 h-32 w-full rounded-lg"
                     {...register("description")}
-                  />
+                  ></textarea>
                 </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="date"
-                    placeholder="Add Display Start Date"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display_start_date")}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="time"
-                    placeholder="Add Display Start Time"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display_start_time")}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="date"
-                    placeholder="Add Display end Date"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display_end_date")}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <img src={twoperson} alt="" className="h-5 w-5" />
-                  <input
-                    type="time"
-                    placeholder="Add Display End Time"
-                    className="h-[65px] px-6 p-2 rounded-xl border outline-none w-full"
-                    {...register("display_end_time")}
-                  />
-                </div>
-                <span className="font-medium">Banner Image</span>
-                <div className="flex justify-between w-4/5">
-                  <div className=" flex-col gap-1 w-full">
-                    <div>
-                      <div className="flex mb-2 ">
-                        <img src={bannersize} alt="" className="h-4 w-5" />
-                        <span className="text-sm text-[#1C4481] justify-between">
+
+                <span className="font-medium mt-3">Banner Image</span>
+                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 p-2">
+                      <img src={bannersize} alt="" className="h-4 w-5 ml-4" />
+                      <div className="flex flex-col">
+                        <span className="text-sm text-[#1C4481]">
                           Select Banner Size
                         </span>
+                        <div className="flex justify-between ">
+                          <select
+                            id_state="banner-size-selection"
+                            className=" outline-none w-[90%] mr-4 "
+                          >
+                            <option value="">60x468 Px</option>
+                            <option value="">90x728 Px</option>
+                            <option value="">250x300 Px</option>
+                            <option value="">280x336 Px</option>
+                          </select>
+                        </div>
                       </div>
-                      <div className="flex justify-between ">
-                        <select
-                          id_state="banner-size-selection"
-                          className=" w-[400px] h-[70px]  border rounded-xl p-2 px-6 outline-none cursor-pointer "
-                        >
-                          <option value="">60x468 Px</option>
-                          <option value="">90x728 Px</option>
-                          <option value="">250x300 Px</option>
-                          <option value="">280x336 Px</option>
-                        </select>
+                    </div>
+                  </div>
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex  gap-4 p-2 mt-2">
+                      <img src={attach} className="w-5 h-5 ml-4" />
+                      <div lassName="flex flex-col">
+                        <span className="text-gray-500 text-nowrap">
+                          Choose banner
+                        </span>
+                        <input
+                          type="file"
+                          id="attachment"
+                          className=" opacity-0 w-full h-full cursor-pointer"
+                          accept=".pdf, .jpg, .png"
+                          {...register("banner")}
+                        />
                       </div>
                     </div>
                     <span className="text-[12px] text-[#848484]">
                       Supported formats PNG, JPEG and File size max.5 mb
                     </span>
                   </div>
-                  <div className="flex flex-col gap-1 mt-7">
-                    <div className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between">
-                      <span className="font-medium">Choose File</span>
-                      <input
-                        type="file"
-                        id_state="fileInput"
-                        className="text-[#1C4481] outline-none text-sm"
-                        {...register("banner")}
-                      />
-                      {/* <span className="text-[12px] text-[#A4A4A4]">
-												Banner Size - 800x400px
-											</span> */}
+                  <div className=" h-16 w-1/2 border rounded-lg">
+                    <div className="w-full h-full  flex items-center gap-4 p-2">
+                      <img src={bannersize} alt="" className="h-4 w-5 ml-4" />
+                      <span className="text-sm text-[#1C4481] justify-between">
+                        Download Sample Banner
+                      </span>
                     </div>
-                    <span className="text-[12px] text-[#848484]">
-                      Supported formats PNG, JPEG and File size max.5 mb
-                    </span>
                   </div>
                 </div>
-                <div className="w-1/2 flex-col gap-1 cursor-pointer">
-                  <div className="flex mb-2">
-                    <img src={bannersize} alt="" className="h-4 w-5" />
-                    <span className="text-sm text-[#1C4481] justify-between">
-                      Download
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    className="flex w-[360px] h-[65px] text-[#1C4481] border rounded-xl p-2 px-6 flex-col justify-center outline-none"
-                    defaultValue={"Download Sample Banner"}
-                    disabled
-                  />
-                </div>
-                <div>
+
+                {/* <div>
                   <div className="flex mb-7">
                     <img src={edit} alt="" className="h-4 w-5" />
                     <span className="text-sm text-[#1C4481] justify-between">
@@ -528,13 +510,21 @@ function CreateHackathon() {
                     className="flex w-4/5 h-[65px] border rounded-xl p-2 px-6 flex-col justify-center outline-none"
                     {...register("description")}
                   />
-                </div>
+                </div> */}
+
+                {/* <div className="mx-4 px-5 mt-4 mb-4 h-32 w-2/5 border rounded-lg">
+                  <textarea
+                    placeholder="Add Description"
+                    className="outline-none w-[90%] items-center pt-10 resize-none h-full"
+                    {...register("description")}
+                  ></textarea>
+                </div> */}
               </div>
-              <div className="flex mt-7 gap-16 ">
-                <div className="relative h-15 mb-3 w-1/3 mr-10">
+              <div className="flex gap-10 justify-around px-5 mt-10 mb-4">
+                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="difficulty_select"
-                    className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                    className=" outline-none w-[90%] mr-4"
                     defaultValue=""
                     {...register("level")}
                   >
@@ -549,10 +539,10 @@ function CreateHackathon() {
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="relative h-15 mb-3 w-1/3">
+                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="sector_select"
-                    className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                    className=" outline-none w-[90%] mr-4"
                     // defaultValue=""
                     {...register("sector")}
                   >
@@ -567,13 +557,10 @@ function CreateHackathon() {
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div>
                 </div>
-              </div>
-              <div className="flex mt-7 gap-16">
-                <div className="relative h-15 mb-3 w-1/3 mr-10">
+                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="language_select"
-                    className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                    // defaultValue=""
+                    className=" outline-none w-[90%] mr-4"
                     {...register("language")}
                   >
                     <option value="">Select Language</option>
@@ -587,10 +574,12 @@ function CreateHackathon() {
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="relative h-15 mb-3 w-1/3 mr-10">
+              </div>
+              <div className="flex gap-10 justify-around px-5 mt-10 mb-4">
+                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="state_select"
-                    className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                    className=" outline-none w-[90%] mr-4"
                     // defaultValue=""
                     onChange={(e) => handleStateChange(e)}
                   >
@@ -605,47 +594,49 @@ function CreateHackathon() {
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div>
                 </div>
-              </div>
-              <div className="relative h-15 mb-3 w-1/3 mr-10 mt-5">
-                <select
-                  id_state="level_select"
-                  className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                  // defaultValue=""
-                  {...register("district")}
-                >
-                  <option value="">Select City</option>
-                  {districts?.map((district) => (
-                    <option key={district?.id_city} value={district.id_city}>
-                      {district?.city}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
+                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
+                  <select
+                    id_state="level_select"
+                    className=" outline-none w-[90%] mr-4"
+                    // defaultValue=""
+                    {...register("district")}
+                  >
+                    <option value="">Select City</option>
+                    {districts?.map((district) => (
+                      <option key={district?.id_city} value={district.id_city}>
+                        {district?.city}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className=" h-16 w-1/2 border rounded-lg">
+                  <div className="w-full h-full  flex  gap-4 p-2 mt-2">
+                    <img src={attach} className="w-5 h-5 ml-4" />
+                    <div lassName="flex flex-col">
+                      <span className="text-gray-500 text-nowrap">
+                        Upload Company Logo
+                      </span>
+                      <input
+                        type="file"
+                        id="attachment"
+                        className=" opacity-0 w-full h-full cursor-pointer"
+                        {...register("companyLogo")}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-[12px] text-[#848484]">
+                    Supported formats PNG, JPEG and File size max.5 mb
+                  </span>
                 </div>
               </div>
-              <span className="font-custom text-lg ">Upload Company Logo</span>
-              <div className="mb-7">
-                <div className="flex w-[360px] h-[65px] border rounded-md border-black border-dotted p-2 px-6 flex-col items-center justify-between">
-                  <span className="font-medium">Choose File</span>
-                  <input
-                    id_state="fileInput"
-                    className="text-[#1C4481] outline-none text-sm"
-                    type="file"
-                    {...register("companyLogo")}
-                  />
-                  {/* <span className="text-[12px] text-[#A4A4A4]">
-										Banner Size - 800x400px
-									</span> */}
-                </div>
-                <span className="text-[12px] text-[#848484]">
-                  Supported formats PNG, JPEG and File size max.5 mb
-                </span>
-              </div>
-              <div className="flex items-center justify-center">
+
+              <div className="flex items-center justify-center mt-10">
                 <button
                   type="submit"
-                  className="border rounded-lg bg-blue-800 py-3 w-[350px] text-white"
+                  className="border rounded-full bg-blue-900 py-3 w-[200px] text-white"
                 >
                   Save
                 </button>

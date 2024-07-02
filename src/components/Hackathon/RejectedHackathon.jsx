@@ -68,24 +68,30 @@ function RejectedHackathon() {
               >
                 <div className="flex h-1/2 items-center justify-between p-6">
                   <div className="flex w-2/3 gap-2">
-                    <img src={hackathon} alt="" className="h-1/6 w-1/6 " />
+                    <img
+                      src={data.banner_pic}
+                      alt="blank"
+                      className="h-1/6 w-1/6 "
+                    />
                     <div className="flex flex-col">
                       <span className="font-semibold text-[#1C4481] text-lg">
                         {data.hackthon_title}
                       </span>
                       <span className="text-sm text-[#1C4481] font-medium">
-                        UI/UX Designer
+                        {data.sector_name}
                       </span>
-                      <span className="text-sm text-[#7B7B7B]">Level-Easy</span>
+                      <span className="text-sm text-[#7B7B7B]">
+                        Level-{data.level_difficulty_name}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center flex-col gap-2">
-                    <div className="flex items-center border border-[#D13C0C] h-8 w-fit px-4 rounded-md bg-[#D13C0C]">
+                    <div className="flex items-center border border-[#D13C0C] h-8 w-fit px-4 rounded-md bg-[#D13C0C] cursor-pointer">
                       <div className="flex items-center gap-2 ">
                         <span className="text-white text-sm">Rejected</span>
                       </div>
                     </div>
-                    <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center">
+                    <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center cursor-pointer">
                       <div className="flex items-center gap-2">
                         <span className="text-white ">Free</span>
                       </div>
@@ -138,19 +144,25 @@ function RejectedHackathon() {
                     className="absolute top-10 left-10 transform -translate-x-1/2 -translate-y-1/2"
                   />
                   <div className="flex w-2/3 gap-2 px-12">
-                    <img src={hackathon} alt="" className="h-1/6 w-1/6 " />
+                    <img
+                      src={data.banner_pic}
+                      alt="blank"
+                      className="h-1/6 w-1/6 "
+                    />
                     <div className="flex flex-col">
                       <span className="font-semibold text-[#1C4481] text-lg">
                         {data.hackthon_title}
                       </span>
                       <span className="text-sm text-[#1C4481] font-medium">
-                        UI/UX Designer
+                        {data.sector_name}
                       </span>
-                      <span className="text-sm text-[#7B7B7B]">Level-Easy</span>
+                      <span className="text-sm text-[#7B7B7B]">
+                        Level-{data.level_difficulty_name}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center flex-col gap-2">
-                    <div className="flex items-center border border-[#D13C0C] h-8 w-fit px-4 rounded-md bg-[#D13C0C]">
+                    <div className="flex items-center border border-[#D13C0C] h-8 w-fit px-4 rounded-md bg-[#D13C0C] cursor-pointer">
                       <div className="flex items-center gap-2">
                         <span className="text-white text-sm">Rejected</span>
                       </div>
@@ -170,7 +182,7 @@ function RejectedHackathon() {
                       <div className="flex flex-col text-[12px]">
                         <span>Date & Time</span>
                         <span className="font-semibold">
-                          {data.date_of_exam}
+                          {data.date_of_exam},{data.exam_start_time}
                         </span>
                       </div>
                     </div>

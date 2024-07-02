@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import leftBg from "/leftBg.jpg";
 import { BsThreeDots } from "react-icons/bs";
 import { IoPerson } from "react-icons/io5";
-import { VscEye } from "react-icons/vsc";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
 import { LuSquareAsterisk } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import { FaCircleExclamation } from "react-icons/fa6";
 import ApiResponse from "../ApiResponse";
 import login from "../../actions/LoginScreens/login";
 import { useForm } from "react-hook-form";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Login() {
   const { register, handleSubmit } = useForm();
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState(null);
   const navigate = useNavigate();
 
@@ -23,19 +25,19 @@ function Login() {
         notification_id: "sdfsdfssdf",
       };
       setErrors({});
-
       const response = await login(data);
-
       const code = response?.data?.code;
       const message = response?.data?.status;
       if (code !== 1000) {
-        // toast.error("Username or Password Wrong!");
         console.log("Message :: ", message);
+        toast.error("Username or Password Wrong!");
         return;
       }
       localStorage.setItem("user", JSON.stringify(response.data.corp_profile));
-      //       toast.success("You have successfully logged in!");
-      navigate("/dashboard");
+      toast.success("You have successfully logged in!");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     } catch (error) {
       const newErrors = {};
 
@@ -46,6 +48,11 @@ function Login() {
       setErrors(newErrors);
     }
   };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   return (
     <div className="min-h-screen relative w-full lg:w-1/2 flex justify-center items-center">
       <div className="absolute inset-0 z-[-1] overflow-hidden">
@@ -98,7 +105,7 @@ function Login() {
           <div className="relative h-14">
             <div>
               <input
-                type="text"
+                type={showPassword ? "text" : "password"}
                 id="floating_filled"
                 className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
                 placeholder=""
@@ -106,8 +113,14 @@ function Login() {
                   required: true,
                 })}
               />
-              <VscEye className="absolute top-1/2 right-2 transform -translate-y-1/2 text-[#1C4481]" />
-              <FaCircleExclamation className="absolute top-1/2 right-[-20px] transform -translate-y-1/2 text-[#1b4581]" />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility} // Toggle visibility on button click
+                className="absolute top-1/2 right-2 transform -translate-y-1/2 text-[#1C4481] focus:outline-none"
+              >
+                {showPassword ? <VscEyeClosed /> : <VscEye />}
+              </button>
+
               <div
                 htmlFor="floating_filled"
                 className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
@@ -141,6 +154,7 @@ function Login() {
           </Link>
         </div>
       </form>
+      <ToastContainer />
     </div>
   );
 }

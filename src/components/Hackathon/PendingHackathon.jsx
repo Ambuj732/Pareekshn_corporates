@@ -67,28 +67,32 @@ function PendingHackathon() {
                 >
                   <div className="flex h-1/2 items-center justify-between p-6">
                     <div className="flex w-2/3 gap-2">
-                      <img src={hackathon} alt="" className="h-1/6 w-1/6 " />
+                      <img
+                        src={data.banner_pic}
+                        alt="blank"
+                        className="h-1/6 w-1/6 "
+                      />
                       <div className="flex flex-col">
                         <span className="font-semibold text-[#1C4481] text-lg">
                           {data.hackthon_title}
                         </span>
                         <span className="text-sm text-[#1C4481] font-medium">
-                          UI/UX Designer
+                          {data.sector_name}
                         </span>
                         <span className="text-sm text-[#7B7B7B]">
-                          Level-Easy
+                          Level-{data.level_difficulty_name}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center flex-col gap-2">
                       <div className="flex items-center border border-[#6F1818] h-8 w-fit px-4 rounded-md bg-[#FFDAB8]">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 cursor-pointer">
                           <span className="text-[#6F1818] text-sm">
                             Pending for Approval
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center">
+                      <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center cursor-pointer">
                         <div className="flex items-center gap-2">
                           <span className="text-white ">Free</span>
                         </div>
@@ -102,7 +106,7 @@ function PendingHackathon() {
                       <div className="flex flex-col text-[12px]">
                         <span>Date & Time</span>
                         <span className="font-semibold">
-                          12-07-2023 | 12:30 PM
+                          {data.date_of_exam} | {data.exam_start_time}
                         </span>
                       </div>
                     </div>

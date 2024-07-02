@@ -2,22 +2,24 @@ import React, { useState, useEffect } from "react";
 import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
 import { useForm } from "react-hook-form";
 import edits from "../../assets/Hackathon/edits.png";
+import { FaEdit } from "react-icons/fa";
 import parekshn from "../../assets/Hackathon/parekshn.png";
 import addAboutUs from "../../actions/Dashboard/addAboutUsImage";
 import addAboutVideo from "../../actions/Dashboard/addAboutUsVideo";
 import getAddEmployee from "../../actions/Dashboard/getAddEmployee";
+
 const ProfileOverview = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue, reset } = useForm();
   const [errors, setErrors] = useState(null);
   const [selectedOption, setSelectedOption] = useState("image");
   const [profileData, setProfileData] = useState([]);
+  const [editItem, setEditItem] = useState(null);
+
   const addAboutUsHandler = async (formData) => {
     setErrors([]);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      console.log("USER:", user);
-      console.log("data is", formData);
-      const file = formData.attachment;
+      const file = formData.attachment[0];
       const imageData = {
         id_corp: user?.id,
         usercode: user?.token,
@@ -37,14 +39,25 @@ const ProfileOverview = () => {
         topic_url: formData?.video,
       };
 
-      if (selectedOption === "image") {
-        await addAboutUs(imageData);
-      } else if (selectedOption === "video") {
-        await addAboutVideo(videoData);
+      if (editItem) {
+        // Update existing item
+        if (selectedOption === "image") {
+          await addAboutUs({ ...imageData, id: editItem.id });
+        } else if (selectedOption === "video") {
+          await addAboutVideo({ ...videoData, id: editItem.id });
+        }
+      } else {
+        // Add new item
+        if (selectedOption === "image") {
+          await addAboutUs(imageData);
+        } else if (selectedOption === "video") {
+          await addAboutVideo(videoData);
+        }
       }
 
-      console.log(imageData);
-      console.log(videoData);
+      reset();
+      setEditItem(null); // Reset edit item
+      getAboutUsData(); // Refresh the data
     } catch (error) {
       setErrors([error.message]);
     }
@@ -53,18 +66,15 @@ const ProfileOverview = () => {
   const getAboutUsData = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      console.log("USER:", user);
       const data = {
         id_corp: user.id,
         usercode: user.token,
       };
-      console.log(data);
       const response = await getAddEmployee(data);
       if (response.data.code === 1000) {
         setProfileData(response?.data?.about_us.about);
       }
     } catch (error) {
-      console.log("data did not fetch", error);
       setErrors([error.message]);
     }
   };
@@ -77,9 +87,20 @@ const ProfileOverview = () => {
     let videoId = "";
     if (url.includes("youtu.be")) {
       videoId = url.split("/")?.pop();
-      console.log(videoId);
     }
     return videoId;
+  };
+
+  const handleEdit = (item) => {
+    setEditItem(item);
+    setValue("title", item.topic_title);
+    setValue("description", item.topic_detail);
+    if (item.media_type === 2) {
+      setSelectedOption("video");
+      setValue("video", item.topic_url);
+    } else {
+      setSelectedOption("image");
+    }
   };
 
   return (
@@ -116,9 +137,9 @@ const ProfileOverview = () => {
                 <input
                   type="text"
                   id="title"
-                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
+                  className="block pl-2 text-black h-14 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
                   placeholder="Title"
-                  {...register("title")}
+                  {...register("title", { required: true })}
                 />
               </div>
 
@@ -129,13 +150,11 @@ const ProfileOverview = () => {
                 >
                   Description
                 </label>
-                <input
-                  type="text"
-                  id="description"
+                <textarea
+                  placeholder="Add Description"
                   className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
-                  placeholder="Description"
-                  {...register("description")}
-                />
+                  {...register("description", { required: true })}
+                ></textarea>
               </div>
 
               <div className="flex justify-around items-center mt-10">
@@ -171,7 +190,7 @@ const ProfileOverview = () => {
                     type="text"
                     placeholder="Video URL"
                     className="w-full border-b-2 cursor-pointer focus:outline-none border-gray-500"
-                    {...register("video")}
+                    {...register("video", { required: true })}
                   />
                 </div>
               )}
@@ -181,7 +200,7 @@ const ProfileOverview = () => {
                     type="file"
                     placeholder="attachment"
                     className="w-full border-b-2 cursor-pointer focus:outline-none border-gray-500"
-                    {...register("attachment")}
+                    {...register("attachment", { required: true })}
                   />
                 </div>
               )}
@@ -189,31 +208,32 @@ const ProfileOverview = () => {
               <div className="flex justify-center mt-16">
                 <button
                   type="submit"
-                  className="bg-blue-900 text-white px-36 py-3 rounded-full focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="bg-blue-900 text-white px-36 py-3 rounded-full "
                 >
-                  Add
+                  {editItem ? "Update" : "Add"}
                 </button>
               </div>
             </form>
           </div>
-          <div className="border-black border my-28 h-[600px]"></div>
+
+          <div className="border my-28 h-[600px]"></div>
 
           <div className="w-[39%] h-[80%] flex flex-col gap-10 overflow-y-scroll">
             {profileData.length > 0 &&
               profileData.map((data) => {
                 if (profileData && data?.media_type === 1) {
-                  console.log(data.topic_url);
                   const imgUrl = data?.topic_url;
                   return (
-                    <div className="border rounded-2xl flex flex-col mb-1 border-green-400 w-4/5 h-52">
-                      <div className="flex justify-between items-center">
-                        <div className="flex flex-col gap-2 m-2">
-                          <span className="text-lg">{data.topic_title}</span>
-                          {imgUrl && <img src={imgUrl} alt="blank" />}
-                        </div>
-                        <img src={edits} className="w-10 h-7" alt="Edit" />
+                    <div
+                      key={data.id}
+                      className="border rounded-2xl flex flex-col mb-1 border-green-400 w-4/5 h-auto"
+                    >
+                      <div className="flex justify-between items-center px-5 mt-2">
+                        <span className="text-lg">{data.topic_title}</span>
+                        <FaEdit onClick={() => handleEdit(data)} />
                       </div>
-                      <div className="flex items-center mx-4 mb-2">
+                      <div className="flex flex-col gap-2 px-4 mt-2">
+                        {imgUrl && <img src={imgUrl} alt="blank" />}
                         <span className="font-normal text-gray-500">
                           {data.topic_detail}
                         </span>
@@ -227,31 +247,30 @@ const ProfileOverview = () => {
               profileData.map((data) => {
                 if (profileData && data.media_type === 2) {
                   const videoUrl = data.topic_url;
-                  console.log("videoUrl", videoUrl);
                   const videoId = extractVideoId(videoUrl);
-                  console.log(videoId);
                   return (
-                    <div className="border rounded-2xl flex flex-col mb-1 border-green-400 w-4/5 h-auto">
-                      <div className="flex justify-between items-center">
-                        <div className="flex flex-col gap-2 m-2">
-                          <span className="text-lg text-red-600">
-                            {data.topic_title}
-                          </span>
-                          <iframe
-                            width="280"
-                            height="160"
-                            className="border rounded-lg"
-                            src={`https://www.youtube.com/embed/${videoId}`}
-                            title="YouTube video player"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen
-                          ></iframe>
-                        </div>
-                        <img src={edits} className="w-10 h-7" alt="Edit" />
+                    <div
+                      key={data.id}
+                      className="border rounded-2xl flex flex-col mb-1 border-green-400 w-4/5 h-auto"
+                    >
+                      <div className="flex justify-between items-center px-5 mt-2">
+                        <span className="text-lg text-red-600">
+                          {data.topic_title}
+                        </span>
+                        <FaEdit onClick={() => handleEdit(data)} />
                       </div>
-                      <div className="flex items-center mx-4 mb-2">
+                      <div className="flex flex-col gap-2 px-4 mt-2">
+                        <iframe
+                          width="280"
+                          height="160"
+                          className="border rounded-lg"
+                          src={`https://www.youtube.com/embed/${videoId}`}
+                          title="YouTube video player"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allowFullScreen
+                        ></iframe>
                         <span className="font-normal text-gray-500">
                           {data.topic_detail}
                         </span>

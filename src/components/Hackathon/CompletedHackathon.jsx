@@ -41,9 +41,6 @@ function CompletedHackathon() {
         usercode: user?.usercode,
         id_corp: 2,
         status: 0,
-        // password: 123456,
-        // os: "android",
-        // username: "Kool@Tech",
       };
       const response = await completedHackathon(data);
       console.log("completed data", response);
@@ -61,7 +58,7 @@ function CompletedHackathon() {
   }, []);
 
   return (
-    <div className="min-h-screen flex">
+    <div className=" flex">
       <CorporateHackathonSidebar />
       <div className="w-5/6 p-4">
         <div className="flex items-center justify-between mb-4 p-4">
@@ -70,9 +67,9 @@ function CompletedHackathon() {
             <span className="text-[18px] text-black">Completed Hackathon</span>
           </span>
         </div>
-        {completedHackathonData.length > 0 &&
-          completedHackathonData.map((data) => (
-            <div className="bg-[#EDF2FF] min-h-screen flex flex-col py-2 gap-8 rounded-3xl">
+        <div className="bg-[#EDF2FF] overflow-y-scroll  flex flex-col py-2 gap-8 rounded-3xl">
+          {completedHackathonData.length > 0 &&
+            completedHackathonData.map((data) => (
               <div
                 className={`w-[calc(100%-40px)] shadow-completedHackathon h-fit mx-auto px-2 pb-2 bg-white rounded-3xl`}
               >
@@ -83,7 +80,7 @@ function CompletedHackathon() {
                         {data.hackthon_title}
                       </span>
                       <span className="text-sm text-[#1C4481] font-medium">
-                        UI/UX Designer
+                        {data.sector_name}
                       </span>
                     </div>
                   </div>
@@ -109,7 +106,7 @@ function CompletedHackathon() {
                         Total Candidate
                       </span>
                       <span className="font-semibold text-lg text-[#4A4A4A]">
-                        75
+                        {data.enrolled_student}
                       </span>
                     </div>
                   </div>
@@ -120,7 +117,7 @@ function CompletedHackathon() {
                         Total Candidate Selected
                       </span>
                       <span className="font-semibold text-lg text-[#4A4A4A]">
-                        50
+                        {data.selected_student}
                       </span>
                     </div>
                   </div>
@@ -132,7 +129,7 @@ function CompletedHackathon() {
                         per candidate
                       </span>
                       <span className="font-semibold text-lg text-[#4A4A4A]">
-                        25
+                        {data.cost_per_candidate}
                       </span>
                     </div>
                   </div>
@@ -143,7 +140,7 @@ function CompletedHackathon() {
                         Total Cost
                       </span>
                       <span className="font-semibold text-lg text-[#4A4A4A]">
-                        25,000
+                        {data.total_cost}
                       </span>
                     </div>
                   </div>
@@ -187,8 +184,8 @@ function CompletedHackathon() {
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+        </div>
       </div>
     </div>
   );

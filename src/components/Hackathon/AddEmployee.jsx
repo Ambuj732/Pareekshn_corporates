@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import twoperson from "../../assets/Hackathon/twoperson.png";
 import edits from "../../assets/Hackathon/edits.png";
+import { FaEdit } from "react-icons/fa";
 import attach from "../../assets/Hackathon/attach.png";
 import addEmployee from "../../actions/Dashboard/addEmployee";
 import getAddEmployee from "../../actions/Dashboard/getAddEmployee";
@@ -91,9 +92,9 @@ const AddEmployee = () => {
                 <input
                   type="text"
                   id="floating_filled"
-                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
+                  className="block pl-2 text-black h-14 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
                   placeholder="Employee Name"
-                  {...register("employee_name")}
+                  {...register("employee_name", { required: true })}
                 />
               </div>
               <div className="mb-4">
@@ -106,25 +107,23 @@ const AddEmployee = () => {
                 <input
                   type="text"
                   id="documentId"
-                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                  className="block pl-2 text-black h-14 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
                   placeholder="Designation"
-                  {...register("designation")}
+                  {...register("designation", { required: true })}
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-7">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="documentId"
+                  htmlFor="description"
                 >
                   Description
                 </label>
-                <input
-                  type="text"
-                  id="documentId"
-                  className="block pl-2 text-black pb-2.5 pt-7 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                  placeholder="Description"
-                  {...register("description")}
-                />
+                <textarea
+                  placeholder="Add Description"
+                  className="block pl-2 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
+                  {...register("description", { required: true })}
+                ></textarea>
               </div>
 
               <div className="mb-4">
@@ -134,7 +133,7 @@ const AddEmployee = () => {
                 >
                   Photo
                 </label>
-                <div className="relative w-full h-12 p-2 border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
+                <div className="relative w-full h-14 p-2 border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
                   <img src={attach} className="w-5 h-5" />
                   <span className="text-gray-500">Attachment</span>
                   <input
@@ -142,7 +141,7 @@ const AddEmployee = () => {
                     id="attachment"
                     className="absolute inset-0 opacity-0 w-full h-full cursor-pointer  "
                     accept=".pdf, .jpg, .png"
-                    {...register("attachment")}
+                    {...register("attachment", { required: true })}
                   />
                 </div>
                 <p className="text-gray-500 text-sm mt-1">
@@ -150,10 +149,10 @@ const AddEmployee = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center mt-10">
+              <div className="flex justify-center mt-4 ">
                 <button
                   type="submit"
-                  className="bg-blue-900 text-white px-36 py-3 rounded-full focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="bg-blue-900 text-white px-36 py-3 rounded-full "
                 >
                   Add
                 </button>
@@ -166,9 +165,9 @@ const AddEmployee = () => {
               employee?.map((data) => {
                 console.log(data);
                 return (
-                  <div className="border rounded-2xl flex flex-col mb-7 border-green-400 w-4/5 h-32 gap-4">
-                    <div className="flex justify-between items-center ">
-                      <div className="flex gap-5 justify-center items-center mx-4">
+                  <div className="border rounded-2xl flex flex-col mb-7 border-green-400 w-4/5 h-auto gap-4">
+                    <div className="flex justify-between items-center mx-4 ">
+                      <div className="flex gap-5 justify-center items-center ">
                         <div className="border border-gray-500 rounded-full w-7 h-7">
                           <img src={data.emp_image} />
                         </div>
@@ -177,7 +176,7 @@ const AddEmployee = () => {
                           <span>{data.emp_designation}</span>
                         </div>
                       </div>
-                      <img src={edits} className="w-10 h-7" />
+                      <FaEdit />
                     </div>
                     <div className="flex items-center mx-4">
                       <span>{data.about_emp}</span>

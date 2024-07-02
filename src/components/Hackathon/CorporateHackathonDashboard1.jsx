@@ -24,6 +24,8 @@ import bottom from "../../assets/Hackathon/bottom.png";
 import { Navigate, Outlet } from "react-router";
 import login from "../../actions/LoginScreens/login";
 import hackathonStatisticsDashboard from "../../actions/Hackathon/hackathonStatisticsDashboard";
+import completedHackathon from "../../actions/Hackathon/completedHackathon";
+import upComingHackathon from "../../actions/Hackathon/upComingHackathon";
 import CreateHackathon from "./CreateHackathon";
 import { useNavigate } from "react-router";
 
@@ -31,6 +33,10 @@ function CorporateHackathonDashboard1() {
   const [loginData, setLoginData] = useState({});
   const [hackathonStaticData, setHackathonStaticData] = useState({});
   const [errors, setErrors] = useState({});
+  const [Page, setPage] = useState(false);
+  const [completedHackathonData, setCompletedHackathonData] = useState([]);
+  const [upComingHackathonData, setupComingHackathonData] = useState([]);
+
   const navigate = useNavigate();
   const getLoginData = async () => {
     try {
@@ -58,14 +64,51 @@ function CorporateHackathonDashboard1() {
       console.log("User :: ", user);
       const data = {
         usercode: user?.usercode,
-        id_corp: 2,
-        // password: 123456,
-        // os: "android",
-        // username: "Kool@Tech",
+        id_corp: user?.id,
       };
       const response = await hackathonStatisticsDashboard(data);
       if (response?.data?.code === 1000)
         setHackathonStaticData(response?.data?.dashboard_data);
+      console.log(response);
+    } catch (error) {
+      console.log("Error while getting data :: ", error);
+      setErrors([error.message]);
+    }
+  };
+
+  const getCompletedHackathonData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User :: ", user);
+      const data = {
+        usercode: user?.usercode,
+        id_corp: 2,
+        status: 0,
+      };
+      const response = await completedHackathon(data);
+      console.log("completed data", response);
+      if (response?.data?.code === 1000)
+        setCompletedHackathonData(response?.data?.hackathons);
+      console.log(response);
+    } catch (error) {
+      console.log("Error while getting data :: ", error);
+      setErrors([error.message]);
+    }
+  };
+
+  const getupComingHackathonData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User :: ", user);
+      const data = {
+        usercode: user?.usercode,
+        id_corp: 2,
+        status: 1,
+      };
+      const response = await upComingHackathon(data);
+      console.log("completed data", response);
+      if (response?.data?.code === 1000)
+        setupComingHackathonData(response?.data?.hackathons);
       console.log(response);
     } catch (error) {
       console.log("Error while getting data :: ", error);
@@ -79,6 +122,8 @@ function CorporateHackathonDashboard1() {
   useEffect(() => {
     getLoginData();
     getHackathonStatisticsData();
+    getCompletedHackathonData();
+    getupComingHackathonData();
   }, []);
 
   return (
@@ -126,7 +171,6 @@ function CorporateHackathonDashboard1() {
                   </div>
                   <div className="flex items-center w-1/3 justify-center">
                     <span className="text-3xl text-white font-medium">
-                      {" "}
                       {hackathonStaticData.total}
                     </span>
                   </div>
@@ -162,80 +206,184 @@ function CorporateHackathonDashboard1() {
                 </div>
               </div>
               <div className="mt-6 flex flex-col gap-2">
-                <div className="flex items-center gap-8 mx-auto	w-full justify-center">
-                  <div className="w-fit border border-[#1C4481] py-2 px-4 rounded-full font-medium text-[#1C4481]">
-                    <span>Completed Hackathon</span>
+                <div className="flex items-center justify-center gap-7 mt-5 mb-2">
+                  <div
+                    className={`"border p-3 px-7 rounded-3xl border cursor-pointer ${
+                      Page
+                        ? "bg-[#1C4481] text-white"
+                        : " text-[#1C4481] bg-white border-[#1C4481] "
+                    }`}
+                  >
+                    <span
+                      className=" font-medium"
+                      onClick={() => {
+                        setPage(true);
+                      }}
+                    >
+                      Completed Hackathon
+                    </span>
                   </div>
-                  <div className="w-fit text-white py-2 px-4 rounded-full font-medium bg-[#1C4481]">
-                    <span>Upcoming Hackathon</span>
-                  </div>
-                </div>
-                <div className="w-full h-fit bg-white rounded-3xl">
-                  <div className="flex h-1/2 items-center justify-between p-6">
-                    <div className="flex w-2/3 gap-2">
-                      <img src={hackathon} alt="" className="h-1/3 w-1/3 " />
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-[#1C4481] text-lg">
-                          Fresher UI/UX designer
-                        </span>
-                        <span className="text-sm text-[#1C4481] font-medium">
-                          UI/UX Designer
-                        </span>
-                        <span className="text-sm text-[#7B7B7B]">
-                          Level-Easy
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white ">Free</span>
-                      </div>
-                    </div>
-                  </div>
-                  <hr class="border-t-[1px] border-[#1C4481]" />
-                  <div className="flex justify-between p-6  text-[#1C4481]">
-                    <div className="flex items-center gap-2">
-                      <img src={date} alt="" className="h-8" />
-                      <div className="flex flex-col text-[12px]">
-                        <span>Date & Time</span>
-                        <span className="font-semibold">
-                          12-07-2023 | 12:30 PM
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <img src={sector} alt="" className="h-8" />
-                      <div className="flex flex-col text-[12px]">
-                        <span>Sector</span>
-                        <span className="font-semibold">IT Sector</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <img src={location} alt="" className="h-8" />
-                      <div className="flex flex-col text-[12px]">
-                        <span>Location</span>
-                        <span className="font-semibold">
-                          Noida, Uttar Pradesh
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <img src={level} alt="" className="h-8" />
-                      <div className="flex flex-col text-[12px]">
-                        <span>Level</span>
-                        <span className="font-semibold">Easy</span>
-                      </div>
-                    </div>
+                  <div
+                    className={`"border p-3 px-7 rounded-3xl border cursor-pointer ${
+                      Page
+                        ? "bg-white text-[#1C4481] border-[#1C4481]"
+                        : "bg-[#1C4481] text-white"
+                    }`}
+                  >
+                    <span
+                      className=" font-medium"
+                      onClick={() => {
+                        setPage(false);
+                      }}
+                    >
+                      Upcoming Hackathon
+                    </span>
                   </div>
                 </div>
+
+                {completedHackathonData.length > 0 &&
+                  completedHackathonData.map((data) => (
+                    <div className="w-full h-fit bg-white rounded-3xl">
+                      <div className="flex h-1/2 items-center justify-between p-6">
+                        <div className="flex w-2/3 gap-2">
+                          <img
+                            src={data.banner.banner_pic}
+                            alt=""
+                            className="h-1/3 w-1/3 border rounded-lg"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[#1C4481] text-lg">
+                              {data.hackthon_title}
+                            </span>
+                            <span className="text-sm text-[#1C4481] font-medium">
+                              {data.sector_name}
+                            </span>
+                            <span className="text-sm text-[#7B7B7B]">
+                              Level-{data.level_difficulty_name}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <span className="text-white ">Free</span>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="border-t-[1px] border-[#1C4481]" />
+                      <div className="flex justify-between p-6  text-[#1C4481]">
+                        <div className="flex items-center gap-2">
+                          <img src={date} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Date & Time</span>
+                            <span className="font-semibold">
+                              {data.date_of_exam} | {data.exam_start_time}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src={sector} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Sector</span>
+                            <span className="font-semibold">
+                              {data.sector_name}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src={location} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Location</span>
+                            <span className="font-semibold">
+                              {data.state}, {data.city}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src={level} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Level</span>
+                            <span className="font-semibold">
+                              {data.level_difficulty_name}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                {upComingHackathonData.length > 0 &&
+                  upComingHackathonData.map((data) => (
+                    <div className="w-full h-fit bg-white rounded-3xl">
+                      <div className="flex h-1/2 items-center justify-between p-6">
+                        <div className="flex w-2/3 gap-2">
+                          <img
+                            src={data.banner.banner_pic}
+                            alt=""
+                            className="h-1/3 w-1/3 border rounded-lg"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[#1C4481] text-lg">
+                              {data.hackthon_title}
+                            </span>
+                            <span className="text-sm text-[#1C4481] font-medium">
+                              {data.sector_name}
+                            </span>
+                            <span className="text-sm text-[#7B7B7B]">
+                              Level-{data.level_difficulty_name}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center bg-[#1C4481] h-10 w-28 rounded-full justify-center cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <span className="text-white ">Free</span>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="border-t-[1px] border-[#1C4481]" />
+                      <div className="flex justify-between p-6  text-[#1C4481]">
+                        <div className="flex items-center gap-2">
+                          <img src={date} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Date & Time</span>
+                            <span className="font-semibold">
+                              {data.date_of_exam} | {data.exam_start_time}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src={sector} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Sector</span>
+                            <span className="font-semibold">
+                              {data.sector_name}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src={location} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Location</span>
+                            <span className="font-semibold">
+                              {data.state}, {data.city}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src={level} alt="" className="h-8" />
+                          <div className="flex flex-col text-[12px]">
+                            <span>Level</span>
+                            <span className="font-semibold">
+                              {data.level_difficulty_name}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 <img src={bottom} alt="" className="mt-2" />
               </div>
             </div>
-            {/* <div className="flex flex-col gap-8 items-center bg-white w-[260px] p-6 rounded-3xl">
-							<img src={gamer} alt="" className="h-48" />
-							<img src={gamer} alt="" className="h-56" />
-						</div> */}
-            {/* <LeaderBoard /> */}
+
             <Outlet />
           </div>
         </div>

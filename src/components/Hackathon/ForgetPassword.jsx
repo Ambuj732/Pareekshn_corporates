@@ -5,7 +5,7 @@ import { IoPerson } from "react-icons/io5";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import forgetPassword from "../../actions/LoginScreens/forgetPassword";
-
+import { Link } from "react-router-dom";
 function ForgetPassword() {
   const { register, handleSubmit } = useForm();
   const [errors, setErrors] = useState({});
@@ -14,10 +14,10 @@ function ForgetPassword() {
   const forgetPasswordHandler = async (formData) => {
     try {
       const data = {
-        username: formData.username,
+        username: formData?.username,
       };
       await forgetPassword(data);
-      // navigate to otp page karega okay but otp page is not here.
+      navigate("/verfiyOtp");
     } catch (error) {
       console.log("Error while logging with passcode :: ", error);
       const newErrors = {};
@@ -80,6 +80,7 @@ function ForgetPassword() {
             </div>
           </div>
         </div>
+
         <button
           type="submit"
           className="bg-[#1C4481] text-white font-medium h-12 w-full rounded-full"

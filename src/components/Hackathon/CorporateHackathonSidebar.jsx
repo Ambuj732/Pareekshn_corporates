@@ -6,7 +6,7 @@ import stat from "/Stat.png";
 import signout from "/signout.png";
 import leftBanner from "/leftBanner.png";
 import { Link, useNavigate } from "react-router-dom";
-
+import logout from "../../actions/LoginScreens/logout";
 function CorporateHackathonSidebar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuOpen1, setIsMenuOpen1] = useState(false);
@@ -14,10 +14,19 @@ function CorporateHackathonSidebar() {
   const [isMenuOpen3, setIsMenuOpen3] = useState(false);
   const navigate = useNavigate();
 
-  const handelLogout = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    navigate("/login");
+  const logoutHandler = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const data = {
+        usercode: user?.usercode,
+        id_self_student: user?.id_self_student,
+      };
+      console.log("Logout Response ");
+      navigate("/");
+      const response = await logout(data);
+    } catch (error) {
+      console.log("Error while logging out user :: ", user);
+    }
   };
 
   return (
@@ -55,7 +64,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Add Document</span>
+                    <span className="">Documents</span>
                   </div>
                 </div>
               </Link>
@@ -71,7 +80,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className=""> AddEmployee</span>
+                    <span className="">Employees</span>
                   </div>
                 </div>
               </Link>
@@ -93,7 +102,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Upcoming Hackathon</span>
+                    <span className="text-nowrap">Upcoming Hackathon</span>
                   </div>
                 </div>
               </Link>
@@ -101,7 +110,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Completed Hackathon</span>
+                    <span className="text-nowrap">Completed Hackathon</span>
                   </div>
                 </div>
               </Link>
@@ -109,7 +118,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Pending Hackathon</span>
+                    <span className="text-nowrap">Pending Hackathon</span>
                   </div>
                 </div>
               </Link>
@@ -117,7 +126,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Rejected Hackathon</span>
+                    <span className="text-nowrap">Rejected Hackathon</span>
                   </div>
                 </div>
               </Link>
@@ -132,7 +141,7 @@ function CorporateHackathonSidebar() {
             className="flex items-center cursor-pointer w-4/5 h-12 rounded-e-full text-white gap-2 py-2 px-4"
           >
             <img src={user} alt="" />
-            <span className="">Jobs</span>
+            <span className="">Job Post</span>
           </div>
 
           {isMenuOpen1 && (
@@ -141,18 +150,18 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Published Job</span>
+                    <span className=""> Jobs</span>
                   </div>
                 </div>
               </Link>
-              <Link to={"/dashboard/createnewjob"} className="w-4/5 h-12">
+              {/* <Link to={"/dashboard/createnewjob"} className="w-4/5 h-12">
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
                     <span className="">Create New Job</span>
                   </div>
                 </div>
-              </Link>
+              </Link> */}
             </div>
           )}
 
@@ -164,7 +173,7 @@ function CorporateHackathonSidebar() {
             className="flex items-center cursor-pointer w-4/5 h-12 rounded-e-full text-white gap-2 py-2 px-4"
           >
             <img src={user} alt="" />
-            <span className="">Statics</span>
+            <span className="">Statistics</span>
           </div>
 
           {isMenuOpen2 && (
@@ -176,7 +185,7 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className="">Hackathon Statics</span>
+                    <span className="">Hackathon Statistics</span>
                   </div>
                 </div>
               </Link>
@@ -184,18 +193,19 @@ function CorporateHackathonSidebar() {
                 <div className="flex items-center w-full h-12 rounded-e-full text-white gap-2 py-2 px-4">
                   <div className="flex items-center gap-2">
                     <img src={user} alt="" />
-                    <span className=""> job Statics</span>
+                    <span className=""> job Statistics</span>
                   </div>
                 </div>
               </Link>
             </div>
           )}
 
-          <div className="flex items-center cursor-pointer w-4/5 h-12 rounded-e-full text-white gap-2 py-2 px-4">
+          <div
+            onClick={logoutHandler}
+            className="flex items-center cursor-pointer w-4/5 h-12 rounded-e-full text-white gap-2 py-2 px-4"
+          >
             <img src={signout} alt="" />
-            <span className=" " onClick={handelLogout}>
-              Logout
-            </span>
+            <span>Logout</span>
           </div>
         </div>
       </div>

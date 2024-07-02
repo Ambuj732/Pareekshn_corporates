@@ -34,6 +34,8 @@ import AddDocument from "./components/Hackathon/AddDocument.jsx";
 import AddEmployee from "./components/Hackathon/AddEmployee.jsx";
 import ProfileOverview from "./components/Hackathon/ProfileOverview.jsx";
 import JobStatistics from "./components/Hackathon/JobStatistics.jsx";
+import OTPVerify from "./components/Hackathon/OTPVerify.jsx";
+import ResetPassword from "./components/Hackathon/ResetPassword.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
@@ -42,6 +44,8 @@ const router = createBrowserRouter(
         <Route path="/signup" element={<CorporateSignUp />}></Route>
         <Route path="/forget-username" element={<ForgetUsername />}></Route>
         <Route path="/forget-password" element={<ForgetPassword />}></Route>
+        <Route path="/verfiyOtp" element={<OTPVerify />}></Route>
+        <Route path="/resetpassword" element={<ResetPassword />}></Route>
       </Route>
       <Route
         path="/dashboard"

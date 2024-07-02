@@ -6,7 +6,9 @@ import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import forgetUsername from "../../actions/LoginScreens/forgetUsername";
 import * as Yup from "yup";
-
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function ForgetUsername() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
@@ -26,19 +28,21 @@ function ForgetUsername() {
       const data = {
         mobile_no: formData?.mobile,
       };
-      await forgetUsernameSchema.validate(data, { abortEarly: false });
       console.log("Data :: ", data);
       await forgetUsername(data);
       setMessage(true);
+      await forgetUsernameSchema.validate(data, { abortEarly: false });
     } catch (error) {
-      console.log("Error while logging with passcode :: ", error);
-      const newErrors = {};
-
-      error.inner.forEach((err) => {
-        newErrors[err.path] = err.message;
-      });
-      console.log("Error ", newErrors);
-      setErrors(newErrors);
+      console.log("Error in Username :: ", error);
+      if (error.inner) {
+        const newErrors = {};
+        error.inner.forEach((err) => {
+          newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      } else {
+        toast.error("Enter valid Username/mobileNumber");
+      }
     }
   };
 
@@ -80,7 +84,7 @@ function ForgetUsername() {
         <div className="relative h-14 rounded-md px-2 py-1 my-8">
           <div>
             <input
-              type="text"
+              type="tel"
               id="floating_filled"
               className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
               placeholder=""
@@ -107,16 +111,20 @@ function ForgetUsername() {
             {errors?.mobile}
           </div>
         )}
+
         <button
           type="submit"
           className="bg-[#1C4481] text-white font-medium h-12 w-full rounded-full"
         >
           Continue
         </button>
-        <button className="bg-white text-[#E88686] border-2 border-[#E88686] my-4 font-medium h-12 w-full rounded-full">
-          Cancel
-        </button>
+        <Link to={"/"}>
+          <button className="bg-white text-[#E88686] border-2 border-[#E88686] my-4 font-medium h-12 w-full rounded-full">
+            Cancel
+          </button>
+        </Link>
       </form>
+      <ToastContainer />
     </div>
   );
 }
