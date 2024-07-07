@@ -14,6 +14,9 @@ import changeEmail from "../../actions/Dashboard/changeEmail";
 import verifyEmailOTP from "../../actions/Dashboard/verifyEmailOTP";
 import changeMobile from "../../actions/Dashboard/changeMobile";
 import verifyOTPMobile from "../../actions/Dashboard/verifyOTPMobile";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const EditDashboardCorporateProfile = ({ closeModal }) => {
   const { register, handleSubmit } = useForm();
   const [states, setStates] = useState([]);
@@ -25,6 +28,8 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
   const [erros, setErrors] = useState(null);
   const [otpSent, setOtpSent] = useState(false);
   const [otpSent2, setOtpSent2] = useState(false);
+  const [active, setActive] = useState("editCorporateProfile");
+
   const preData = async () => {
     try {
       const indianStates = await getStates();
@@ -120,6 +125,8 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
         id_corporate_size: Number(formData?.corporate_size),
       };
       await updateCorporateProfile(data);
+      toast.success("Profile Updated Successfully!");
+
       console.log("Data", data);
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
@@ -139,6 +146,8 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
         password: formData?.password,
       };
       await updateUsernameAndUserId(data);
+      toast.success("Updated Successfully!");
+
       console.log("Data", data);
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
@@ -157,6 +166,8 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
         type: 2,
       };
       await changeEmail(data);
+      toast.success(" Otp sent in your Email!");
+
       console.log("Data:", data);
       setOtpSent(true);
     } catch (error) {
@@ -174,11 +185,22 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
         mobile: formData?.phoneNumber,
         type: 1,
       };
-      await changeMobile(data);
-      console.log("Data:", data);
-      setOtpSent2(true);
+
+      const response = await changeMobile(data);
+      if (response?.data?.code === 1000) {
+        toast.success("Otp sent to your Phone Number!");
+        console.log("Data:", data);
+        setOtpSent2(true);
+      } else if (
+        response?.data?.code !== 1000 ||
+        response?.status ===
+          "Mobile Number already used. Please use different one."
+      ) {
+        toast.error("Mobile number is already registered!");
+      }
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
+      toast.error("An error occurred. Please try again.");
     }
   };
 
@@ -195,6 +217,8 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
       };
       console.log("Data", data);
       await verifyEmailOTP(data);
+      toast.success(" Email updated Successfully!");
+
       console.log("Data", data);
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
@@ -213,6 +237,8 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
       };
       console.log("Data", data);
       await verifyOTPMobile(data);
+      toast.success(" Phone Number Updated Successfully!");
+
       console.log("Data", data);
     } catch (error) {
       console.log("Error while logging with formData :: ", error);
@@ -240,383 +266,507 @@ const EditDashboardCorporateProfile = ({ closeModal }) => {
             />
           </button>
         </div>
-        <form onSubmit={handleSubmit(corporateEditHandler)}>
-          <div className="flex gap-5 px-5 mt-7">
-            <div className="relative h-12 w-1/2">
-              <select
-                id_state="state_select"
-                className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                // defaultValue=""
-                {...register("state")}
-                onChange={(e) => handleStateChange(e)}
-              >
-                <option value="">Select State</option>
-                {states?.map((data) => (
-                  <option key={data?.id_state} value={data?.id_state}>
-                    {data.state}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-              </div>
-            </div>
-            <div className="relative h-12 w-1/2">
-              <select
-                id_state="level_select"
-                className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                // defaultValue=""
-                {...register("district")}
-              >
-                <option value="">Select City</option>
-                {districts?.map((district) => (
-                  <option key={district?.id_city} value={district.id_city}>
-                    {district?.city}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-5 px-5 mt-7">
-            <div className="relative h-12 w-1/2">
-              <select
-                id_state="founded_year"
-                className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                defaultValue=""
-                {...register("founded_year")}
-              >
-                <option value="">Select Year</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-              </div>
-            </div>
-            <div className="relative h-12 w-1/2">
-              <select
-                id_state="corporate_size"
-                className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                // defaultValue=""
-                {...register("corporate_size")}
-              >
-                <option value="">Corporate Size</option>
-
-                {corporateSize?.map((size) => (
-                  <option key={size?.id} value={size.id}>
-                    {size?.size_from} to {size?.size_to}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-5 px-5 mt-7">
-            <div className="relative h-12 w-1/2">
-              <select
-                id="industry_related"
-                className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                defaultValue=""
-                {...register("industry_related")}
-              >
-                <option value="">Select Industry</option>
-                {industry?.map((data) => (
-                  <option key={data?.id} value={data.id}>
-                    {data.industry_name}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-              </div>
-            </div>
-            <div className="relative h-12 w-1/2">
-              <select
-                id_state="corporate_stage"
-                className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                // defaultValue=""
-                {...register("corporate_stage")}
-              >
-                <option value="">Corporate Stage</option>
-                {corporateStage?.map((data) => (
-                  <option key={data?.id} value={data?.id}>
-                    {data.stage}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-              </div>
-            </div>
-          </div>
-          <div className="flex mt-7">
-            <div className="relative h-12 w-1/2 mx-4 ">
-              <div>
-                <input
-                  type="text"
-                  id="floating_filled"
-                  className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                  placeholder=""
-                  {...register("location", {
-                    required: true,
-                  })}
-                />
-                <div
-                  htmlFor="floating_filled"
-                  className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                >
-                  <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                  <label htmlFor="" className="pl-2">
-                    Location
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-center items-center mt-10">
-            <button
-              id="btn1"
-              type="submit"
-              className="border rounded-3xl bg-blue-700 px-10 py-2"
+        <div className="">
+          <div className="flex items-center gap-6 px-8 h-12">
+            <span
+              className={`${
+                active == "editCorporateProfile"
+                  ? " px-3 py-2 rounded bg-[#1C4481] text-white font-medium "
+                  : ""
+              } cursor-pointer`}
+              onClick={() => setActive("editCorporateProfile")}
             >
-              Update1
-            </button>
-          </div>
-        </form>
-
-        <hr className="border border-gray-500 mx-10 mt-10"></hr>
-        <form onSubmit={handleSubmit(userNameAndUserIdHandler)}>
-          <div className="flex gap-5 px-5 mt-7">
-            <div className="relative h-12 w-1/2">
-              <div>
-                <input
-                  type="text"
-                  id="floating_filled"
-                  className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                  placeholder=""
-                  {...register("Corporate_name", {
-                    required: true,
-                  })}
-                />
-                <div
-                  htmlFor="floating_filled"
-                  className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                >
-                  <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                  <label htmlFor="" className="pl-2">
-                    Corporate Name
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div className="relative h-12 w-1/2">
-              <div>
-                <input
-                  type="useid"
-                  id="floating_filled"
-                  className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                  placeholder=""
-                  {...register("userid", {
-                    required: true,
-                  })}
-                />
-                <div
-                  htmlFor="floating_filled"
-                  className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                >
-                  <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                  <label htmlFor="" className="pl-2">
-                    Userid
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-5 px-5 mt-7">
-            <div className="relative h-12 w-1/2">
-              <div>
-                <input
-                  type="password"
-                  id="floating_filled"
-                  className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                  placeholder=""
-                  {...register("password", {
-                    required: true,
-                  })}
-                />
-                <div
-                  htmlFor="floating_filled"
-                  className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                >
-                  <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                  <label htmlFor="" className="pl-2">
-                    Enter Current Password
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-center items-center mt-10">
-            <button
-              type="submit"
-              className="border rounded-3xl bg-blue-800 px-10 py-2"
+              Update profile
+            </span>
+            <span
+              className={`${
+                active == "userNameAndUserIdHandler"
+                  ? " px-3 py-2 rounded bg-[#1C4481] text-white font-medium "
+                  : ""
+              } cursor-pointer`}
+              onClick={() => setActive("userNameAndUserIdHandler")}
             >
-              Update2
-            </button>
+              Update Username and Userid
+            </span>
+            <span
+              className={`${
+                active == "changeEmailIdHandler"
+                  ? " px-3 py-2 rounded bg-[#1C4481] text-white font-medium "
+                  : ""
+              } cursor-pointer`}
+              onClick={() => setActive("changeEmailIdHandler")}
+            >
+              Email
+            </span>
+            <span
+              className={`${
+                active == "changeMobileHandler"
+                  ? " px-3 py-2 rounded bg-[#1C4481] text-white font-medium "
+                  : ""
+              } cursor-pointer`}
+              onClick={() => setActive("changeMobileHandler")}
+            >
+              Number
+            </span>
           </div>
-        </form>
-        <hr className="border border-gray-500 mx-10 mt-4 "></hr>
-        <div>
-          <form onSubmit={handleSubmit(changeEmailIdHandler)}>
-            <div className="flex gap-5 px-5 mt-7 mb-7">
-              <div className="relative h-12 w-1/2">
-                <div>
-                  <input
-                    type="text"
-                    id="email"
-                    className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                    placeholder=""
-                    {...register("email", {
-                      required: true,
-                    })}
-                  />
-                  <div
-                    htmlFor="email"
-                    className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                  >
-                    <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                    <label htmlFor="email" className="pl-2">
-                      Email
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center items-center mt-10">
-              <button
-                type="submit"
-                className="border rounded-3xl bg-blue-800 px-10 py-2"
-              >
-                Send OTP
-              </button>
-            </div>
-          </form>
 
-          {otpSent && (
-            <form onSubmit={handleSubmit(handleOtpSubmit)}>
-              <div className="flex px-5 mt-7 mb-7">
-                <div className="relative h-12 w-1/2">
-                  <div>
-                    <input
-                      type="text"
-                      id="otp"
-                      className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                      placeholder=""
-                      {...register("otp", {
-                        required: true,
-                      })}
-                    />
-                    <div
-                      htmlFor="otp"
-                      className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                    >
-                      <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                      <label htmlFor="otp" className="pl-2">
-                        Enter OTP
-                      </label>
+          {active == "editCorporateProfile" && (
+            <div>
+              <div>
+                <form
+                  id="form-id-1"
+                  name="corporateEditHandler"
+                  onSubmit={handleSubmit(corporateEditHandler)}
+                >
+                  <div className="flex gap-5 px-5 mt-7">
+                    <div className="relative h-12 w-1/2">
+                      <select
+                        id_state="state_select"
+                        className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                        // defaultValue=""
+                        {...register("state", { required: true })}
+                        onChange={(e) => handleStateChange(e)}
+                      >
+                        <option value="">Select State</option>
+                        {states?.map((data) => (
+                          <option key={data?.id_state} value={data?.id_state}>
+                            {data.state}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <img
+                          src={arrowDown}
+                          alt="Arrow Down"
+                          className="h-4 w-4"
+                        />
+                      </div>
+                    </div>
+                    <div className="relative h-12 w-1/2">
+                      <select
+                        id_state="level_select"
+                        className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                        // defaultValue=""
+                        {...register("district", { required: true })}
+                      >
+                        <option value="">Select City</option>
+                        {districts?.map((district) => (
+                          <option
+                            key={district?.id_city}
+                            value={district.id_city}
+                          >
+                            {district?.city}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <img
+                          src={arrowDown}
+                          alt="Arrow Down"
+                          className="h-4 w-4"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                  <div className="flex gap-5 px-5 mt-7">
+                    <div className="relative h-12 w-1/2">
+                      <select
+                        id_state="founded_year"
+                        className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                        defaultValue=""
+                        {...register("founded_year", { required: true })}
+                      >
+                        <option value="">Select Year</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                      </select>
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <img
+                          src={arrowDown}
+                          alt="Arrow Down"
+                          className="h-4 w-4"
+                        />
+                      </div>
+                    </div>
+                    <div className="relative h-12 w-1/2">
+                      <select
+                        id_state="corporate_size"
+                        className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                        // defaultValue=""
+                        {...register("corporate_size", { required: true })}
+                      >
+                        <option value="">Corporate Size</option>
+
+                        {corporateSize?.map((size) => (
+                          <option key={size?.id} value={size.id}>
+                            {size?.size_from} to {size?.size_to}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <img
+                          src={arrowDown}
+                          alt="Arrow Down"
+                          className="h-4 w-4"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-5 px-5 mt-7">
+                    <div className="relative h-12 w-1/2">
+                      <select
+                        id="industry_related"
+                        className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                        defaultValue=""
+                        {...register("industry_related", { required: true })}
+                      >
+                        <option value="">Select Industry</option>
+                        {industry?.map((data) => (
+                          <option key={data?.id} value={data.id}>
+                            {data.industry_name}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <img
+                          src={arrowDown}
+                          alt="Arrow Down"
+                          className="h-4 w-4"
+                        />
+                      </div>
+                    </div>
+                    <div className="relative h-12 w-1/2">
+                      <select
+                        id_state="corporate_stage"
+                        className="pl-8 pr-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
+                        // defaultValue=""
+                        {...register("corporate_stage", { required: true })}
+                      >
+                        <option value="">Corporate Stage</option>
+                        {corporateStage?.map((data) => (
+                          <option key={data?.id} value={data?.id}>
+                            {data.stage}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <img
+                          src={arrowDown}
+                          alt="Arrow Down"
+                          className="h-4 w-4"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-7">
+                    <div className="relative h-12 w-[350px] mx-4 ">
+                      <div>
+                        <input
+                          type="text"
+                          id="floating_filled"
+                          className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                          placeholder=""
+                          {...register("location", {
+                            required: true,
+                          })}
+                        />
+                        <div
+                          htmlFor="floating_filled"
+                          className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                        >
+                          <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                          <label htmlFor="" className="pl-2">
+                            Location
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center mt-10">
+                    <button
+                      type="submit"
+                      id="btn-id-20"
+                      className="border rounded-3xl bg-[#1C4481] px-10 py-2 text-white"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </form>
+                <ToastContainer />
               </div>
-              <div className="flex justify-center items-center mt-10">
-                <button
-                  type="submit"
-                  className="border rounded-3xl bg-blue-800 px-10 mb-10 py-2"
-                >
-                  Update4
-                </button>
-              </div>
-            </form>
+            </div>
           )}
-        </div>
-        <div>
-          <form onSubmit={handleSubmit(changeMobileHandler)}>
-            <div className="flex gap-5 px-5 mt-7 mb-7">
-              <div className="relative h-12 w-1/2">
-                <div>
-                  <input
-                    type="text"
-                    id="mobile_number"
-                    className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                    placeholder=""
-                    {...register("phoneNumber", {
-                      required: true,
-                    })}
-                  />
-                  <div
-                    htmlFor="email"
-                    className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                  >
-                    <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                    <label htmlFor="email" className="pl-2">
-                      Mobile Number
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center items-center mt-10">
-              <button
-                type="submit"
-                className="border rounded-3xl bg-blue-800 px-10 py-2"
+          {active == "userNameAndUserIdHandler" && (
+            <div>
+              <form
+                id="form-id-2"
+                name="userNameAndUserIdHandler"
+                onSubmit={handleSubmit(userNameAndUserIdHandler)}
               >
-                Send OTP
-              </button>
-            </div>
-          </form>
-
-          {otpSent2 && (
-            <form onSubmit={handleSubmit(handlePhoneOtpSubmit)}>
-              <div className="flex px-5 mt-7 mb-7">
-                <div className="relative h-12 w-1/2">
-                  <div>
-                    <input
-                      type="text"
-                      id="otp"
-                      className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-                      placeholder=""
-                      {...register("otp", {
-                        required: true,
-                      })}
-                    />
-                    <div
-                      htmlFor="otp"
-                      className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
-                    >
-                      <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
-                      <label htmlFor="otp" className="pl-2">
-                        Enter OTP
-                      </label>
+                <div className="flex gap-5 px-5 mt-7">
+                  <div className="relative h-12 w-1/2">
+                    <div>
+                      <input
+                        type="text"
+                        id="floating_filled"
+                        className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                        placeholder=""
+                        {...register("Corporate_name", {
+                          required: true,
+                        })}
+                      />
+                      <div
+                        htmlFor="floating_filled"
+                        className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                      >
+                        <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                        <label htmlFor="" className="pl-2">
+                          Corporate Name
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative h-12 w-1/2">
+                    <div>
+                      <input
+                        type="useid"
+                        id="floating_filled"
+                        className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                        placeholder=""
+                        {...register("userid", {
+                          required: true,
+                        })}
+                      />
+                      <div
+                        htmlFor="floating_filled"
+                        className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                      >
+                        <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                        <label htmlFor="" className="pl-2">
+                          Userid
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-center items-center mt-10">
-                <button
-                  type="submit"
-                  className="border rounded-3xl bg-blue-800 px-10 mb-10 py-2"
+
+                <div className="flex gap-5 px-5 mt-7">
+                  <div className="relative h-12 w-[350px]">
+                    <div>
+                      <input
+                        type="password"
+                        id="floating_filled"
+                        className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                        placeholder=""
+                        {...register("password", {
+                          required: true,
+                        })}
+                      />
+                      <div
+                        htmlFor="floating_filled"
+                        className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                      >
+                        <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                        <label htmlFor="" className="pl-2">
+                          Enter Current Password
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-center items-center mt-10">
+                  <button
+                    type="submit"
+                    id="btn-id-21"
+                    className="border rounded-3xl bg-[#1C4481] px-10 py-2 text-white"
+                  >
+                    Update
+                  </button>
+                </div>
+              </form>
+              <ToastContainer />
+            </div>
+          )}
+          {active == "changeEmailIdHandler" && (
+            <div>
+              <div>
+                <form
+                  id="form-id-3"
+                  name="changeEmailIdHandler"
+                  onSubmit={handleSubmit(changeEmailIdHandler)}
                 >
-                  Update3
-                </button>
+                  <div className="flex gap-5 px-5 mt-7 mb-7">
+                    <div className="relative h-12 w-1/2">
+                      <div>
+                        <input
+                          type="text"
+                          id="email"
+                          className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                          placeholder=""
+                          {...register("email", {
+                            required: true,
+                          })}
+                        />
+                        <div
+                          htmlFor="email"
+                          className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                        >
+                          <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                          <label htmlFor="email" className="pl-2">
+                            Email
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center mt-10">
+                    <button
+                      type="submit"
+                      id="btn-id-22"
+                      className="border rounded-3xl bg-blue-900 px-10 py-2 text-white"
+                    >
+                      Send OTP
+                    </button>
+                  </div>
+                </form>
+                <ToastContainer />
               </div>
-            </form>
+              <div>
+                {otpSent && (
+                  <form
+                    id="form-id-4"
+                    name="handleOtpSubmit"
+                    onSubmit={handleSubmit(handleOtpSubmit)}
+                  >
+                    <div className="flex px-5 mt-7 mb-7">
+                      <div className="relative h-12 w-1/2">
+                        <div>
+                          <input
+                            type="text"
+                            id="otp"
+                            className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                            placeholder=""
+                            {...register("otp", {
+                              required: true,
+                            })}
+                          />
+                          <div
+                            htmlFor="otp"
+                            className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                          >
+                            <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                            <label htmlFor="otp" className="pl-2">
+                              Enter OTP
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center mt-10">
+                      <button
+                        type="submit"
+                        id="btn-id-23"
+                        className="border rounded-3xl bg-[#1C4481] px-10 mb-10 py-2 text-white"
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </form>
+                )}
+                <ToastContainer />
+              </div>
+            </div>
+          )}
+          {active == "changeMobileHandler" && (
+            <div>
+              <div>
+                <form
+                  id="form-id-5"
+                  name="changeMobileHandler"
+                  onSubmit={handleSubmit(changeMobileHandler)}
+                >
+                  <div className="flex gap-5 px-5 mt-7 mb-7">
+                    <div className="relative h-12 w-1/2">
+                      <div>
+                        <input
+                          type="text"
+                          id="mobile_number"
+                          className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                          placeholder=""
+                          {...register("phoneNumber", {
+                            required: true,
+                          })}
+                        />
+                        <div
+                          htmlFor="email"
+                          className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                        >
+                          <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                          <label htmlFor="email" className="pl-2">
+                            Mobile Number
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center mt-10">
+                    <button
+                      type="submit"
+                      id="btn-id-24"
+                      className="border rounded-3xl bg-blue-900 px-10 py-2 text-white"
+                    >
+                      Send OTP
+                    </button>
+                  </div>
+                </form>
+                <ToastContainer />
+              </div>
+              <div>
+                {otpSent2 && (
+                  <form
+                    id="form-id-6"
+                    name="handlePhoneOtpSubmit"
+                    onSubmit={handleSubmit(handlePhoneOtpSubmit)}
+                  >
+                    <div className="flex px-5 mt-7 mb-7">
+                      <div className="relative h-12 w-1/2">
+                        <div>
+                          <input
+                            type="text"
+                            id="otp"
+                            className="block pl-8 text-black pb-2.5 pt-5 w-full text-base border border-[#0b0b0b] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+                            placeholder=""
+                            {...register("otp", {
+                              required: true,
+                            })}
+                          />
+                          <div
+                            htmlFor="otp"
+                            className="absolute text-base pl-5 text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
+                          >
+                            <IoPerson className="absolute top-1/2 left-2 transform -translate-y-1/2 text-[#1C4481]" />
+                            <label htmlFor="otp" className="pl-2">
+                              Enter OTP
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-center items-center mt-10">
+                      <button
+                        type="submit"
+                        id="btn-id-25"
+                        className="border rounded-3xl bg-[#1C4481] px-10 mb-10 py-2 text-white"
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </form>
+                )}
+                <ToastContainer />
+              </div>
+            </div>
           )}
         </div>
       </div>

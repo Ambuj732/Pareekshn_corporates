@@ -158,21 +158,21 @@ function OTPVerify() {
           errors.secondDigit ||
           errors.thirdDigit ||
           errors.fourthDigit ? (
-            <div className="error flex text-red-600 font-medium text-sm">
+            <div className="error flex text-red-600 font-medium text-sm items-center">
               Please enter a valid 4-digit code.
             </div>
           ) : null}
         </div>
         <button
           type="submit"
-          className="bg-[#1C4481] rounded-3xl w-full h-10 font-medium text-white mt-4"
+          className="bg-[#1C4481] rounded-3xl w-full h-10 font-medium text-white mt-6"
         >
           Submit
         </button>
         <button
           type="button"
           onClick={resendOTPHandler}
-          className="text-sm text-[#50B4ED] mt-4"
+          className="text-sm text-[#50B4ED] mt-6 text-center ml-40"
           disabled={resendTimer > 0}
         >
           {resendTimer > 0 ? `Resend (${resendTimer}s)` : "Resend"}

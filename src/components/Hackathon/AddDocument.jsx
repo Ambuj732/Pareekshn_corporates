@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa6";
 import CorporateHackathonSidebar from "./CorporateHackathonSidebar";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 import addDocumentWeb from "../../actions/Dashboard/addDocumentWeb";
 import fetchAllDocument from "../../actions/Dashboard/fetchAllDocument";
 import attach from "../../assets/Hackathon/attach.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddDocument = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -12,16 +15,17 @@ const AddDocument = () => {
   const [errors, setErrors] = useState([]);
 
   const formSubmitHandler = async (formData) => {
-    setErrors([]);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const file = formData?.attachment[0];
 
-      // File size validation
       if (file && file.size > 5 * 1024 * 1024) {
         setErrors(["File size exceeds 5MB."]);
         return;
       }
+
+      const fileBase64 = await getBase64(file);
+      console.log(fileBase64);
 
       let fileType = 1;
       if (file.type === "application/pdf") {
@@ -36,15 +40,26 @@ const AddDocument = () => {
         file_type: fileType,
         doc_no: formData?.document_number,
         id_req_doc: 1,
-        file: file,
+        file: fileBase64,
         file_name: formData?.document_type,
       };
 
       await addDocumentWeb(data);
-      reset();
-      getAllDocuments();
+
+      if (response?.data?.code === 1000) {
+        toast.success("Document uploaded successfully!");
+      } else {
+        setErrors([response?.data?.message || "Failed to upload document."]);
+      }
     } catch (error) {
-      setErrors([error.message]);
+      console.error("Error uploading document:", error);
+      if (axios.isAxiosError(error)) {
+        setErrors([
+          error?.response?.data?.message || "Network error occurred.",
+        ]);
+      } else {
+        setErrors(["Error uploading document. Please try again."]);
+      }
     }
   };
 
@@ -60,13 +75,26 @@ const AddDocument = () => {
         setAllDocument(response?.data?.corp_docs);
       }
     } catch (error) {
-      setErrors([error.message]);
+      console.error("Error fetching documents:", error);
+      setErrors(["Error fetching documents. Please try again."]);
     }
   };
 
   useEffect(() => {
     getAllDocuments();
   }, []);
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => {
+        console.error("Error converting file to base64:", error);
+        reject(error);
+      };
+    });
+  };
 
   return (
     <div className="w-screen h-screen flex overflow-hidden">
@@ -75,13 +103,6 @@ const AddDocument = () => {
       <div className="bg-[#EDF2FF] min-h-screen w-screen m-3 flex  rounded-3xl">
         <div className="bg-white min-h-screen flex items-center  gap-6  w-full m-7 rounded-3xl">
           <div className="w-[39%] h-[70%] mx-10">
-            {/* <div className="bg-white  w-full h-16">
-              <div className="flex gap-10 items-center mt-4 mx-4">
-                <span className="text-black font-custom font-medium">
-                  Document
-                </span>
-              </div>
-            </div> */}
             <div className="flex flex-col ml-4 ">
               <span className="font-custom font-medium">Documents</span>
               <span className="font-custom text-gray-500">
@@ -167,6 +188,7 @@ const AddDocument = () => {
                 </button>
               </div>
             </form>
+            {/* <ToastContainer /> */}
           </div>
 
           <div className=" border-black border my-28  h-[600px]"></div>
@@ -188,9 +210,14 @@ const AddDocument = () => {
                       <span>{data.doc_no}</span>
                       <span className="text-gray-500"></span>
                     </div>
-                    <button className="text-blue-600 hover:text-blue-800">
+                    <a
+                      href={data.doc_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
                       <FaEye />
-                    </button>
+                    </a>
                   </div>
                 </div>
               ))}

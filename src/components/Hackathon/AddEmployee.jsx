@@ -9,9 +9,19 @@ import attach from "../../assets/Hackathon/attach.png";
 import addEmployee from "../../actions/Dashboard/addEmployee";
 import getAddEmployee from "../../actions/Dashboard/getAddEmployee";
 const AddEmployee = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const [employee, setEmployee] = useState([]);
   const [errors, setErrors] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+
+  useEffect(() => {
+    if (editItem) {
+      setValue("employee_name", editItem.emp_name);
+      setValue("designation", editItem.emp_designation);
+      setValue("description", editItem.about_emp);
+    }
+  }, [editItem]);
 
   const addEmployeeHandler = async (formData) => {
     setErrors([]);
@@ -30,10 +40,17 @@ const AddEmployee = () => {
         req_by: 1,
         file: file,
       };
+      console.log(isEditing);
+      if (isEditing) {
+        await addEmployee(data, isEditing, editItem?.id); // tri
+        console.log("Hey");
+      } else {
+        await addEmployee(data);
+        console.log("Hey");
+      }
 
-      console.log(data);
-      await addEmployee(data);
-      console.log(data);
+      setIsEditing(false);
+      getAllEmployee();
     } catch (error) {
       setErrors([error.message]);
     }
@@ -58,6 +75,12 @@ const AddEmployee = () => {
   useEffect(() => {
     getAllEmployee();
   }, []);
+
+  const handleEditClick = (item) => {
+    setEditItem(item);
+    setIsEditing(true);
+  };
+
   return (
     <div className="w-screen h-screen flex   overflow-hidden">
       <CorporateHackathonSidebar />
@@ -135,13 +158,17 @@ const AddEmployee = () => {
                 </label>
                 <div className="relative w-full h-14 p-2 border border-black rounded-md appearance-none  dark:border-gray-600 dark:focus:border-blue-500  flex items-center  gap-3 px-3 shadow-sm">
                   <img src={attach} className="w-5 h-5" />
-                  <span className="text-gray-500">Attachment</span>
+                  <span className="text-gray-500 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer ">
+                    Attachment
+                  </span>
                   <input
                     type="file"
                     id="attachment"
-                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer  "
+                    className="absolute inset-0 opacity-0  h-full cursor-pointer  "
                     accept=".pdf, .jpg, .png"
-                    {...register("attachment", { required: true })}
+                    {...register("attachment", {
+                      required: "Attachment is required", // Custom error message for required validation
+                    })}
                   />
                 </div>
                 <p className="text-gray-500 text-sm mt-1">
@@ -154,7 +181,7 @@ const AddEmployee = () => {
                   type="submit"
                   className="bg-blue-900 text-white px-36 py-3 rounded-full "
                 >
-                  Add
+                  {isEditing ? "Update" : "Add"}
                 </button>
               </div>
             </form>
@@ -176,7 +203,7 @@ const AddEmployee = () => {
                           <span>{data.emp_designation}</span>
                         </div>
                       </div>
-                      <FaEdit />
+                      <FaEdit onClick={() => handleEditClick(data)} />
                     </div>
                     <div className="flex items-center mx-4">
                       <span>{data.about_emp}</span>

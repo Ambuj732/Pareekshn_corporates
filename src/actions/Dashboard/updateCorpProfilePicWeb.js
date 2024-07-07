@@ -1,7 +1,7 @@
 import { PUBLIC_REST_API_ENDPOINT, BEARER_TOKEN } from "../../constants";
 import axios from "axios";
 
-const forgetPassword = async (data) => {
+const updateCorpProfilePicWeb = async (data) => {
   try {
     const queryString = Object.keys(data)
       .map(
@@ -9,7 +9,7 @@ const forgetPassword = async (data) => {
       )
       .join("&");
     const response = await axios.post(
-      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/forgotPassword?${queryString}`,
+      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/updateProfilePicWeb?${queryString}`,
       {},
       {
         headers: {
@@ -17,11 +17,15 @@ const forgetPassword = async (data) => {
         },
       }
     );
-    console.log("Forget password response :: ", response);
+    console.log("Update Corp Profile Pic Web response :: ", response);
     return response;
   } catch (error) {
-    console.log("Error whiling forgetting password :: ", forgetPassword);
+    console.log(
+      "Error while logging in Update Corp Profile Pic Web :: ",
+      error
+    );
+    throw error;
   }
 };
 
-export default forgetPassword;
+export default updateCorpProfilePicWeb;

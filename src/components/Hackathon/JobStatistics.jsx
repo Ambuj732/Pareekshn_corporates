@@ -14,7 +14,7 @@ const HackathonStatistics = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       console.log("User :: ", user);
       const data = {
-        usercode: user?.usercode,
+        usercode: user?.token,
         id_corp: 2,
         start_date: "2024-04-03",
         end_date: "2024-05-03",
@@ -145,9 +145,9 @@ const HackathonStatistics = () => {
           </div>
         </div>
         <div className=" flex flex-col border  rounded-2xl bg-white shadow-lg p-4 ">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span>All Hackathon Lists</span>
-            <div className="flex justify-around gap-7 mx-2 border border-black rounded-2xl px-2 mb-3">
+            <div className="flex justify-around items-center gap-7 mx-4 border border-black rounded-2xl px-2 mb-3">
               <span>Date</span>
               <img src={pen} />
             </div>

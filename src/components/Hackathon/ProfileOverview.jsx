@@ -40,14 +40,12 @@ const ProfileOverview = () => {
       };
 
       if (editItem) {
-        // Update existing item
         if (selectedOption === "image") {
-          await addAboutUs({ ...imageData, id: editItem.id });
+          await addAboutUs({ ...imageData, id_about: editItem.id });
         } else if (selectedOption === "video") {
-          await addAboutVideo({ ...videoData, id: editItem.id });
+          await addAboutVideo({ ...videoData, id_about: editItem.id });
         }
       } else {
-        // Add new item
         if (selectedOption === "image") {
           await addAboutUs(imageData);
         } else if (selectedOption === "video") {
@@ -189,7 +187,8 @@ const ProfileOverview = () => {
                   <input
                     type="text"
                     placeholder="Video URL"
-                    className="w-full border-b-2 cursor-pointer focus:outline-none border-gray-500"
+                    className="w-full border-b-2 cursor-pointer  border-gray-500
+                    appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
                     {...register("video", { required: true })}
                   />
                 </div>
@@ -199,7 +198,7 @@ const ProfileOverview = () => {
                   <input
                     type="file"
                     placeholder="attachment"
-                    className="w-full border-b-2 cursor-pointer focus:outline-none border-gray-500"
+                    className="w-full border-b-2 cursor-pointer  border-gray-500 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer items-center"
                     {...register("attachment", { required: true })}
                   />
                 </div>
@@ -230,7 +229,10 @@ const ProfileOverview = () => {
                     >
                       <div className="flex justify-between items-center px-5 mt-2">
                         <span className="text-lg">{data.topic_title}</span>
-                        <FaEdit onClick={() => handleEdit(data)} />
+                        <FaEdit
+                          onClick={() => handleEdit(data)}
+                          className="cursor-pointer"
+                        />
                       </div>
                       <div className="flex flex-col gap-2 px-4 mt-2">
                         {imgUrl && <img src={imgUrl} alt="blank" />}
@@ -257,7 +259,10 @@ const ProfileOverview = () => {
                         <span className="text-lg text-red-600">
                           {data.topic_title}
                         </span>
-                        <FaEdit onClick={() => handleEdit(data)} />
+                        <FaEdit
+                          onClick={() => handleEdit(data)}
+                          className="cursor-pointer"
+                        />
                       </div>
                       <div className="flex flex-col gap-2 px-4 mt-2">
                         <iframe

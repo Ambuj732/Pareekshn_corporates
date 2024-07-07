@@ -1,7 +1,7 @@
 import { PUBLIC_REST_API_ENDPOINT, BEARER_TOKEN } from "../../constants";
 import axios from "axios";
 
-const addEmployee = async (data) => {
+const addEmployee = async (data, isEditing, id) => {
   try {
     console.log(data);
     const formData = new FormData();
@@ -13,6 +13,8 @@ const addEmployee = async (data) => {
     formData.append("about_emp", data.about_emp);
     formData.append("attachment", data.attachment);
     formData.append("req_by", data.req_by);
+    console.log(id);
+    if (isEditing) formData.append("id_emp", Number(id)); // tri
 
     const response = await axios.post(
       `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/addEmployee?`,

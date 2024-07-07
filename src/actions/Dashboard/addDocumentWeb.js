@@ -4,8 +4,7 @@ import axios from "axios";
 const addDocumentWeb = async (data) => {
   try {
     console.log(data);
-    const formData = new FormData();
-    formData.append("file", data?.file);
+
     const queryString = Object.keys(data)
       .map(
         (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
@@ -13,7 +12,7 @@ const addDocumentWeb = async (data) => {
       .join("&");
     const response = await axios.post(
       `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/addDocumentWeb?${queryString}`,
-      formData,
+      {},
       {
         headers: {
           Authorization: `Bearer ${BEARER_TOKEN}`,

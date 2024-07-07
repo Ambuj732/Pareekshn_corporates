@@ -115,7 +115,7 @@ function Login() {
               />
               <button
                 type="button"
-                onClick={togglePasswordVisibility} // Toggle visibility on button click
+                onClick={togglePasswordVisibility}
                 className="absolute top-1/2 right-2 transform -translate-y-1/2 text-[#1C4481] focus:outline-none"
               >
                 {showPassword ? <VscEyeClosed /> : <VscEye />}

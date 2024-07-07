@@ -17,6 +17,7 @@ import tablet from "../../assets/Hackathon/tablet.png";
 import location1 from "../../assets/Hackathon/location1.png";
 import getCorporateProfileData from "../../actions/Dashboard/getCorporateProfile";
 import EditDashboardCorporateProfile from "./EditDashboardCorporateProfile";
+import updateCorpProfilePicWeb from "../../actions/Dashboard/updateCorpProfilePicWeb";
 function DashboardCorporateProfile() {
   const [corporateProfile, setCorporateProfile] = useState({});
   const [editProfile, setEditProfile] = useState(false);
@@ -28,7 +29,7 @@ function DashboardCorporateProfile() {
       console.log("User data is--- :: ", user);
       const data = {
         usercode: user?.token,
-        id_corp: user.id,
+        id_corp: user?.id,
         req_by: 1,
       };
       console.log("data is ", data);
@@ -48,6 +49,45 @@ function DashboardCorporateProfile() {
 
   const closeModal = () => {
     setEditProfile(false);
+  };
+
+  const handleFileChange = async (event, formData) => {
+    const file = event.target.files[0];
+    const fileBase64 = await getBase64(file);
+    console.log(fileBase64);
+    if (file) {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log(user);
+        const data = {
+          id_corp: user?.id,
+          usercode: user?.token,
+          file: fileBase64,
+        };
+        const response = await updateCorpProfilePicWeb(data);
+        if (response.status === 1000) {
+          setCorporateProfile((prevProfile) => ({
+            ...prevProfile,
+            profile_pic: response?.data?.pic,
+          }));
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        setErrors([error.message]);
+      }
+    }
+  };
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => {
+        console.error("Error converting file to base64:", error);
+        reject(error);
+      };
+    });
   };
 
   useEffect(() => {
@@ -72,7 +112,7 @@ function DashboardCorporateProfile() {
                   className="border border-[#1C4481] rounded-full w-20 flex items-center justify-center font-medium"
                   onClick={editPage}
                 >
-                  <div className="flex items-center cursor-pointer gap-2 py-1">
+                  <div className="flex items-center cursor-pointer gap-2 py-1 ">
                     <img src={pen} alt="" className="h-[22px]" />
                     <span onClick={editPage}>Edit</span>
                   </div>
@@ -81,21 +121,29 @@ function DashboardCorporateProfile() {
               <div className="flex flex-col gap-4">
                 <div className="h-32 w-32 flex items-center justify-center rounded-full relative bg-[#D9D9D9]">
                   <img
-                    src={corporateProfile.cover_photo_link}
-                    alt=""
-                    className="h-[105px] absolute object-fill rounded-full Object-fit"
+                    src={corporateProfile.profile_pic}
+                    alt="blank"
+                    className="h-[105px] absolute text-center top-10 object-fill rounded-full Object-fit"
                   />
                   <img
                     src={profileedit}
                     alt=""
-                    className="absolute bg-[#1C4481] rounded-full h-8 p-1 border-white border-[2px] outline-[1px] outline-white bottom-2 right-0"
+                    className="absolute bg-[#1C4481] rounded-full h-8 p-1 border-white border-[2px] outline-[1px] outline-white bottom-2 right-0 cursor-pointer"
+                    onClick={() => document.getElementById("fileInput").click()}
                   />
                 </div>
+                <input
+                  type="file"
+                  id="fileInput"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
                 <div className="w-4/5 flex justify-between my-4 text-[#1C4481]">
                   <div className="flex w-[360px] h-[55px] border border-black rounded-md p-2 px-6 flex-col justify-center">
                     <div className="flex gap-1 items-center">
                       <img src={user} alt="" className=" w-5" />
                       <input
+                        disabled
                         placeholder="Corporate Name"
                         className="text-[#1C4481] text-sm outline-none"
                         value={corporateProfile.corporate_name}
@@ -107,6 +155,7 @@ function DashboardCorporateProfile() {
                     <div className="flex gap-1 items-center">
                       <img src={email} alt="" className=" w-5" />
                       <input
+                        disabled
                         placeholder="Enter your Email"
                         className="text-[#1C4481] outline-none text-sm"
                         value={corporateProfile.corporate_email}
@@ -119,6 +168,7 @@ function DashboardCorporateProfile() {
                     <div className="flex gap-1 items-center">
                       <img src={tablet} alt="" className=" w-5" />
                       <input
+                        disabled
                         className="text-[#1C4481] outline-none text-sm"
                         placeholder="Corporate Mobile Number"
                         value={corporateProfile.corporate_mob}
@@ -141,6 +191,7 @@ function DashboardCorporateProfile() {
                     <div className="flex gap-1 items-center">
                       <img src={user} alt="" className=" w-5" />
                       <input
+                        disabled
                         className="text-[#1C4481] outline-none text-sm"
                         placeholder="Corporte User ID"
                         value={corporateProfile.corporate_userid}
@@ -151,6 +202,7 @@ function DashboardCorporateProfile() {
                     <div className="flex gap-1 items-center">
                       <img src={email} alt="" className=" w-5" />
                       <input
+                        disabled
                         className="text-[#1C4481] outline-none text-sm"
                         placeholder="Corporate Stage"
                         value={corporateProfile.id_corporate_stage}
@@ -219,7 +271,7 @@ function DashboardCorporateProfile() {
                     </div>
                   </div>
                 </div>
-                {/* <div className="w-4/5 flex justify-between my-4 text-[#1C4481]">
+                <div className="w-4/5 flex justify-between my-4 text-[#1C4481]">
                   <div className="flex w-[360px] h-[55px] border border-black rounded-md p-2 px-6 flex-col justify-center">
                     <div className="flex gap-1 items-center">
                       <img src={user} alt="" className=" w-5" />
@@ -231,7 +283,7 @@ function DashboardCorporateProfile() {
                       />
                     </div>
                   </div>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>

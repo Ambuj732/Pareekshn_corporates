@@ -13,7 +13,7 @@ const HackathonStatistics = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       console.log("User :: ", user);
       const data = {
-        usercode: user?.usercode,
+        usercode: user?.token,
         id_corp: 2,
         start_date: "2024-05-03",
         end_date: "2024-06-03",

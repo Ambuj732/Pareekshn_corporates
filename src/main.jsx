@@ -36,6 +36,7 @@ import ProfileOverview from "./components/Hackathon/ProfileOverview.jsx";
 import JobStatistics from "./components/Hackathon/JobStatistics.jsx";
 import OTPVerify from "./components/Hackathon/OTPVerify.jsx";
 import ResetPassword from "./components/Hackathon/ResetPassword.jsx";
+import CorporateHackathonDashboard from "./pages/Hackathon/CorporateHackathonDashboard.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
@@ -50,6 +51,10 @@ const router = createBrowserRouter(
       <Route
         path="/dashboard"
         element={<CorporateHackathonDashboard1 />}
+      ></Route>
+      <Route
+        path="/hackathon-details-page"
+        element={<CorporateHackathonDashboard />}
       ></Route>
       <Route path="/create-hackathon" element={<CreateHackathon />}></Route>
       <Route

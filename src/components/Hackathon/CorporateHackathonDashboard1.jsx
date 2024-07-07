@@ -28,7 +28,6 @@ import completedHackathon from "../../actions/Hackathon/completedHackathon";
 import upComingHackathon from "../../actions/Hackathon/upComingHackathon";
 import CreateHackathon from "./CreateHackathon";
 import { useNavigate } from "react-router";
-
 function CorporateHackathonDashboard1() {
   const [loginData, setLoginData] = useState({});
   const [hackathonStaticData, setHackathonStaticData] = useState({});
@@ -118,6 +117,10 @@ function CorporateHackathonDashboard1() {
 
   const CreateHackathon = () => {
     navigate("/create-hackathon");
+  };
+
+  const hackathonDetailPage = () => {
+    navigate("/hackathon-details-page");
   };
   useEffect(() => {
     getLoginData();
@@ -249,10 +252,14 @@ function CorporateHackathonDashboard1() {
                           <img
                             src={data.banner.banner_pic}
                             alt=""
-                            className="h-1/3 w-1/3 border rounded-lg"
+                            className="h-1/3 w-1/3 border rounded-lg cursor-pointer"
+                            onClick={hackathonDetailPage}
                           />
                           <div className="flex flex-col">
-                            <span className="font-semibold text-[#1C4481] text-lg">
+                            <span
+                              className="font-semibold text-[#1C4481] text-lg cursor-pointer"
+                              onClick={hackathonDetailPage}
+                            >
                               {data.hackthon_title}
                             </span>
                             <span className="text-sm text-[#1C4481] font-medium">

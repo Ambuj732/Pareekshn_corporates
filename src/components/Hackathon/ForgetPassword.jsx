@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import forgetPassword from "../../actions/LoginScreens/forgetPassword";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 function ForgetPassword() {
   const { register, handleSubmit } = useForm();
   const [errors, setErrors] = useState({});
@@ -16,8 +17,15 @@ function ForgetPassword() {
       const data = {
         username: formData?.username,
       };
-      await forgetPassword(data);
-      navigate("/verfiyOtp");
+      const response = await forgetPassword(data);
+      if (response?.data?.code === 1000) {
+        setTimeout(() => {
+          navigate("/verfiyOtp");
+        }, 1500);
+        toast.success("Otp sent");
+      } else {
+        toast.error("No user found");
+      }
     } catch (error) {
       console.log("Error while logging with passcode :: ", error);
       const newErrors = {};
@@ -88,6 +96,7 @@ function ForgetPassword() {
           Continue
         </button>
       </form>
+      <ToastContainer />
     </div>
   );
 }

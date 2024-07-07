@@ -6,7 +6,6 @@ import twoperson from "../../assets/Hackathon/twoperson.png";
 import bannertitle from "../../assets/Hackathon/bannertitle.png";
 import arrowDown from "../../assets/Hackathon/arrowDown.png";
 import attach from "../../assets/Hackathon/attach.png";
-
 import time from "../../assets/Hackathon/time.png";
 import bannersize from "../../assets/Hackathon/bannersize.png";
 import edit from "../../assets/Hackathon/edit.png";
@@ -20,7 +19,7 @@ import getSectors from "../../actions/MasterDataApi/getSectors";
 import getDifficultyLevel from "../../actions/MasterDataApi/getDifficultyLevel";
 import getLanguageList from "../../actions/MasterDataApi/getLanguageList";
 import getCourses from "../../actions/MasterDataApi/getCourses";
-
+import getBannerSample from "../../actions/MasterDataApi/getBannerSample";
 import { useNavigate } from "react-router";
 
 const hours = [...Array(12).keys()].map((n) =>
@@ -41,13 +40,22 @@ function CreateHackathon() {
   const [selectedTime, setSelectedTime] = useState(0);
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(0);
+  const [bannerfile, setBannerFile] = useState();
+  const [logofile, setLogoFile] = useState();
+  const [bannerData, setBannerData] = useState([]);
+  const handleBannerChange = (e) => {
+    setBannerFile(e.target.files[0]);
+  };
+  const handleLogoChange = (e) => {
+    setLogoFile(e.target.files[0]);
+  };
 
   const preData = async () => {
     try {
       const indianStates = await getStates();
       setStates(indianStates?.data?.states);
       const allCourses = await getCourses();
-      console.log(allCourses?.data?.courses);
+      //console.log(allCourses?.data?.courses);
       setCourses(allCourses?.data?.courses);
     } catch (error) {
       console.log(
@@ -65,15 +73,32 @@ function CreateHackathon() {
       };
       const response = await getCities(data);
       setDistricts(response?.data?.cities);
-      console.log("Cities :: ", response?.data?.cities);
+      // console.log("Cities :: ", response?.data?.cities);
     } catch (error) {
       console.log("Error while getting cities :: ", error);
     }
   };
 
+  const getBannerSampleData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("User:", user);
+      const data = {
+        id_corp: 2,
+        usercode: user?.usercode,
+      };
+      const response = await getBannerSample(data);
+      console.log(response);
+      if (response?.data?.code === 1000) setBannerData(response?.data?.banners);
+    } catch (error) {
+      console.log("Error while getting data :: ", error);
+      setErrors([error.message]);
+    }
+  };
+
   const handleStateChange = (e) => {
     const stateId = e.target.value;
-    console.log(stateId);
+    //console.log(stateId);
     setSelectedState(stateId);
     getCitiesHandler(stateId);
     console.log("State :: ", stateId);
@@ -81,7 +106,7 @@ function CreateHackathon() {
 
   const handleCourseChange = (e) => {
     const courseId = e.target.value;
-    console.log(courseId);
+    //console.log(courseId);
     setSelectedCourse(courseId);
   };
 
@@ -92,7 +117,7 @@ function CreateHackathon() {
         id_self_student: 1,
       };
       const response = await getSectors(data);
-      console.log("Sector data", response);
+      //console.log("Sector data", response);
       if (response?.data?.code === 1000) setSector(response?.data?.sector);
       console.log(response);
     } catch (error) {
@@ -104,9 +129,9 @@ function CreateHackathon() {
   const getDifficultyLevelData = async () => {
     try {
       const response = await getDifficultyLevel();
-      console.log("Sector data", response);
+      //console.log("Sector data", response);
       if (response?.data?.code === 1000) setDifficultyLevel(response?.data?.dl);
-      console.log(response);
+      ///console.log(response);
     } catch (error) {
       console.log("Error while getting data :: ", error);
       setErrors([error.message]);
@@ -116,13 +141,13 @@ function CreateHackathon() {
   const getLanguageListData = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      console.log("User :: ", user);
+      //console.log("User :: ", user);
       const response = await getLanguageList();
-      console.log("Sector data", response);
+      //console.log("Sector data", response);
       if (response?.data?.code === 1000) setLanguage(response?.data?.lang_list);
-      console.log(response);
+      //console.log(response);
     } catch (error) {
-      console.log("Error while getting data :: ", error);
+      //console.log("Error while getting data :: ", error);
       setErrors([error.message]);
     }
   };
@@ -143,9 +168,8 @@ function CreateHackathon() {
   }
 
   const createHackathonHandler = async (formData) => {
-    console.log(formData);
-    console.log(selectedTime);
-    console.log(user);
+    //console.log(formData);
+    const logoImage = await fileToBase64(logofile);
     try {
       const data = {
         exam_start_time: formData?.hackathonTime + ":00",
@@ -163,39 +187,56 @@ function CreateHackathon() {
         date_of_exam: formData?.examDate,
         passing_percentage: Number(formData?.passPercent),
         usercode: user?.token,
-        file: formData?.companyLogo[0],
+        file: logoImage,
       };
 
       // Create Hackathon
-      console.log(data);
       const response = await createHackathon(data);
       const id_hackathon = response?.data?.id_hackathon;
-      console.log(id_hackathon);
-      console.log(response);
-
-      const bannerImage = await fileToBase64(formData?.banner[0]);
-      console.log(bannerImage);
-
-      // Create Banner
-      const bannerData = {
-        id_corp: user?.id,
-        display_start_time: "13:56:00",
-        display_end_time: "13:57:00",
-        display_start_date: "2024-05-22",
-        display_end_date: "2024-05-26",
-        banner_title: "banner 1st",
-        id_banner_size: 4,
-        id_hackthon: id_hackathon,
-        usercode: user?.token,
-        banner_description:
-          "description of banner. this is the baaner for this hackthon.",
-        file: bannerImage,
-      };
-      console.log(bannerData);
-      const res = await createBannerWeb(bannerData);
-      console.log(res);
+      if (response.status == 200) {
+        const code = response?.data?.code;
+        if (code == 1000 || code == 1004) {
+          const bannerImage = await fileToBase64(bannerfile);
+          // Create Banner
+          const bannerData = {
+            id_corp: user?.id,
+            display_start_time: "13:56:00",
+            display_end_time: "13:57:00",
+            display_start_date: "2024-05-22",
+            display_end_date: "2024-05-26",
+            banner_title: "banner 1st",
+            id_banner_size: 4,
+            id_hackthon: id_hackathon,
+            usercode: user?.token,
+            banner_description:
+              "description of banner. this is the baaner for this hackthon.",
+            file: bannerImage,
+          };
+          //console.log(bannerData);
+          const res = await createBannerWeb(bannerData);
+          //console.log(res);
+          if (response.status == 200) {
+            const code = response?.data?.code;
+            if (code == 1000) {
+              setError("The hackathon has been created and banner uploaded.");
+              navigate("/next-hackathon");
+            }
+          }
+        } else {
+          setError(
+            "Please try again. There is an error in creating hackathon."
+          );
+          return;
+        }
+      } else {
+        setError("Please try again.");
+        return;
+      }
     } catch (error) {
-      console.log("Error while creating hackathon :: ", error);
+      console.log(
+        "Please try again. There is an error in creating hackathon. :: ",
+        error
+      );
     }
   };
 
@@ -209,6 +250,7 @@ function CreateHackathon() {
     getSectorData();
     getDifficultyLevelData();
     getLanguageListData();
+    getBannerSampleData();
   }, []);
 
   return (
@@ -246,7 +288,7 @@ function CreateHackathon() {
                         type="text"
                         placeholder="Add title"
                         className=" outline-none w-[90%] "
-                        {...register("title")}
+                        {...register("title", { required: true })}
                       />
                     </div>
                   </div>
@@ -256,7 +298,7 @@ function CreateHackathon() {
                       <select
                         id_state="sector_select"
                         className=" outline-none w-[90%] mr-4 "
-                        {...register("course")}
+                        {...register("course", { required: true })}
                       >
                         <option value="">Select Course</option>
                         {courses?.map((data) => (
@@ -274,7 +316,7 @@ function CreateHackathon() {
                         type="date"
                         placeholder="Add Date of Exam"
                         className=" outline-none w-[90%] mr-4 "
-                        {...register("examDate")}
+                        {...register("examDate", { required: true })}
                       />
                     </div>
                   </div>
@@ -288,7 +330,7 @@ function CreateHackathon() {
                         type="time"
                         placeholder="Add Hackathon Time"
                         className=" outline-none w-[90%] mr-4"
-                        {...register("hackathonTime")}
+                        {...register("hackathonTime", { required: true })}
                       />
                     </div>
                   </div>
@@ -299,7 +341,7 @@ function CreateHackathon() {
                         type="Number"
                         placeholder="Add Passing Percentage"
                         className=" outline-none w-[90%] "
-                        {...register("passPercent")}
+                        {...register("passPercent", { required: true })}
                       />
                     </div>
                   </div>
@@ -312,7 +354,7 @@ function CreateHackathon() {
                       />
                       <select
                         className=" outline-none w-[90%] mr-4 "
-                        {...register("negative")}
+                        {...register("negative", { required: true })}
                       >
                         <option value="">Negative</option>
                         <option value="yes">Yes</option>
@@ -330,7 +372,7 @@ function CreateHackathon() {
                       value="free"
                       name="value"
                       className="w-4 h-4 text-blue-600"
-                      {...register("planType")}
+                      {...register("planType", { required: true })}
                     />
                     <label
                       for="default-radio-1"
@@ -346,7 +388,7 @@ function CreateHackathon() {
                       value="paid"
                       name="planType"
                       className="w-4 h-4 text-blue-600"
-                      {...register("planType")}
+                      {...register("planType", { required: true })}
                     />
                     <label
                       for="default-radio-1"
@@ -361,7 +403,7 @@ function CreateHackathon() {
                         type="number "
                         placeholder="Rs. "
                         className="px-7 no-spinner border-2 border-[#1C4481] w-full py-3 rounded-md bg-[#EBEBEB66] outline-none"
-                        {...register("amount")}
+                        {...register("amount", { required: true })}
                       />
                     </div>
                   }
@@ -380,7 +422,7 @@ function CreateHackathon() {
                         type="text"
                         placeholder="Banner Title"
                         className=" outline-none w-[90%] "
-                        {...register("bannerTitle")}
+                        {...register("bannerTitle", { required: true })}
                       />
                     </div>
                   </div>
@@ -394,7 +436,7 @@ function CreateHackathon() {
                         type="date"
                         placeholder="Add Display Start Date"
                         className=" outline-none w-[90%] mr-4"
-                        {...register("display_start_date")}
+                        {...register("display_start_date", { required: true })}
                       />
                     </div>
                   </div>
@@ -408,7 +450,7 @@ function CreateHackathon() {
                         type="time"
                         placeholder="Add Display Start Time"
                         className=" outline-none w-[90%] mr-4 "
-                        {...register("display_start_time")}
+                        {...register("display_start_time", { required: true })}
                       />
                     </div>
                   </div>
@@ -420,7 +462,7 @@ function CreateHackathon() {
                         type="date"
                         placeholder="Add Display end Date"
                         className=" outline-none w-[90%] mr-4"
-                        {...register("display_end_date")}
+                        {...register("display_end_date", { required: true })}
                       />
                     </div>
                   </div>
@@ -431,17 +473,17 @@ function CreateHackathon() {
                         type="time"
                         placeholder="Add Display End Time"
                         className=" outline-none w-[90%] mr-4"
-                        {...register("display_end_time")}
+                        {...register("display_end_time", { required: true })}
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className=" mt-2 mb-4 h-32 w-2/5 ">
+                <div className=" mt-2 mb-4 h-32 w-[97%] ">
                   <textarea
                     placeholder="Add Description"
-                    className="block pl-2  pb-2.5 pt-5 text-base border focus:outline-none focus:ring-0 peer items-center mx-4 px-5 mt-2 mb-4 h-32 w-full rounded-lg"
-                    {...register("description")}
+                    className="  pl-2  pb-2.5 pt-5 text-base border focus:outline-none focus:ring-0 peer items-center mx-4 px-5 mt-2 mb-4 h-32 w-full rounded-lg"
+                    {...register("description", { required: true })}
                   ></textarea>
                 </div>
 
@@ -450,19 +492,20 @@ function CreateHackathon() {
                   <div className=" h-16 w-1/2 border rounded-lg">
                     <div className="w-full h-full  flex  gap-4 p-2">
                       <img src={bannersize} alt="" className="h-4 w-5 ml-4" />
-                      <div className="flex flex-col">
+                      <div className="flex flex-col w-full">
                         <span className="text-sm text-[#1C4481]">
                           Select Banner Size
                         </span>
-                        <div className="flex justify-between ">
+                        <div className="flex justify-between w-full ">
                           <select
                             id_state="banner-size-selection"
-                            className=" outline-none w-[90%] mr-4 "
+                            className=" outline-none w-full  "
                           >
-                            <option value="">60x468 Px</option>
-                            <option value="">90x728 Px</option>
-                            <option value="">250x300 Px</option>
-                            <option value="">280x336 Px</option>
+                            {bannerData?.map((data) => (
+                              <option key={data?.id} value={data.id}>
+                                {data.width}x{data.height}
+                              </option>
+                            ))}
                           </select>
                         </div>
                       </div>
@@ -471,16 +514,17 @@ function CreateHackathon() {
                   <div className=" h-16 w-1/2 border rounded-lg">
                     <div className="w-full h-full  flex  gap-4 p-2 mt-2">
                       <img src={attach} className="w-5 h-5 ml-4" />
-                      <div lassName="flex flex-col">
+                      <div>
                         <span className="text-gray-500 text-nowrap">
                           Choose banner
                         </span>
                         <input
                           type="file"
                           id="attachment"
+                          onChange={(e) => handleBannerChange(e)}
                           className=" opacity-0 w-full h-full cursor-pointer"
-                          accept=".pdf, .jpg, .png"
-                          {...register("banner")}
+                          accept="image/*"
+                          /* {...register("banner")} */
                         />
                       </div>
                     </div>
@@ -526,7 +570,7 @@ function CreateHackathon() {
                     id_state="difficulty_select"
                     className=" outline-none w-[90%] mr-4"
                     defaultValue=""
-                    {...register("level")}
+                    {...register("level", { required: true })}
                   >
                     <option value="">Select Level</option>
                     {difficultyLevel?.map((data) => (
@@ -535,16 +579,16 @@ function CreateHackathon() {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-                  </div>
+                  </div> */}
                 </div>
                 <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="sector_select"
                     className=" outline-none w-[90%] mr-4"
                     // defaultValue=""
-                    {...register("sector")}
+                    {...register("sector", { required: true })}
                   >
                     <option value="">Select Sector</option>
                     {sector?.map((data) => (
@@ -553,15 +597,15 @@ function CreateHackathon() {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-                  </div>
+                  </div> */}
                 </div>
                 <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="language_select"
                     className=" outline-none w-[90%] mr-4"
-                    {...register("language")}
+                    {...register("language", { required: true })}
                   >
                     <option value="">Select Language</option>
                     {language?.map((data) => (
@@ -570,9 +614,9 @@ function CreateHackathon() {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="flex gap-10 justify-around px-5 mt-10 mb-4">
@@ -590,16 +634,16 @@ function CreateHackathon() {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-                  </div>
+                  </div> */}
                 </div>
                 <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
                   <select
                     id_state="level_select"
                     className=" outline-none w-[90%] mr-4"
                     // defaultValue=""
-                    {...register("district")}
+                    {...register("district", { required: true })}
                   >
                     <option value="">Select City</option>
                     {districts?.map((district) => (
@@ -608,22 +652,21 @@ function CreateHackathon() {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
-                  </div>
                 </div>
                 <div className=" h-16 w-1/2 border rounded-lg">
                   <div className="w-full h-full  flex  gap-4 p-2 mt-2">
                     <img src={attach} className="w-5 h-5 ml-4" />
-                    <div lassName="flex flex-col">
+                    <div>
                       <span className="text-gray-500 text-nowrap">
                         Upload Company Logo
                       </span>
                       <input
                         type="file"
-                        id="attachment"
+                        id="logo_file"
+                        onChange={(e) => handleLogoChange(e)}
                         className=" opacity-0 w-full h-full cursor-pointer"
-                        {...register("companyLogo")}
+                        accept="image/*"
+                        /* {...register("companyLogo")} */
                       />
                     </div>
                   </div>

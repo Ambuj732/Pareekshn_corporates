@@ -144,11 +144,13 @@ const PostedJob = () => {
                           Industry-{data.id_industry}
                         </span>
                         <span className="#292929 text-sm">
-                          This job has many responsivities
+                          {data.job_description}
                         </span>
-                        <span className="#292929 text-sm">UI Design</span>
                         <span className="#292929 text-sm">
-                          Android Studio Knowledge
+                          {data.industry_name}
+                        </span>
+                        <span className="#292929 text-sm">
+                          {data.skill.skill_name},
                         </span>
                       </div>
                       <div className="flex flex-col items-center gap-2">

@@ -13,6 +13,8 @@ import getCities from "../../actions/LoginScreens/getCities";
 import getStates from "../../actions/LoginScreens/getStates";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
+
 function CorporateSignUp() {
   const { register, handleSubmit } = useForm();
   const [errors, setErrors] = useState(null);
@@ -20,6 +22,8 @@ function CorporateSignUp() {
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [selectedState, setSelectedState] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const preData = async () => {
     try {
       const indianStates = await getStates();
@@ -134,6 +138,8 @@ function CorporateSignUp() {
                 <div className="flex items-center text-sm gap-2 text-[#1C4481]">
                   <img src={tablet} alt="" className="h-5 w-5" />
                   <input
+                    type="tel"
+                    pattern="[0-9]{10}"
                     className="outline-none"
                     placeholder={"Mobile Number*"}
                     {...register("Number", { required: true })}
@@ -161,35 +167,28 @@ function CorporateSignUp() {
                     {...register("password", { required: true })}
                   ></input>
                 </div>
-                <div className="flex items-center justify-between">
-                  <img src={viewHideIcon} alt="" className="h-5 w-5" />
-                </div>
+                <div className="flex items-center justify-between"></div>
               </div>
               <div className="relative h-12 mb-3 w-full">
                 <div>
                   <select
                     id="state_select"
                     className="block pl-8 pr-3 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
-                    defaultValue=""
                     onChange={(e) => handleStateChange(e)}
                   >
-                    <option value="" disabled hidden>
-                      Select State
-                    </option>
+                    <option value="">Select State</option>
                     {states?.map((state) => (
                       <option key={state?.id_state} value={state.id_state}>
                         {state.state}
                       </option>
                     ))}
                   </select>
-                  <div className="flex absolute right-2 top-1/2 -translate-y-1/2 items-center justify-between">
-                    <img src={arrowDown} />
-                  </div>
+
                   <div
                     htmlFor="floating_filled"
                     className="absolute text-base text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
                   >
-                    <img src={close} alt="" className="h-5 w-5" />
+                    <img src={message} alt="" className="h-5 w-5" />
                     <label htmlFor="" className="pl-2">
                       State
                     </label>
@@ -202,7 +201,7 @@ function CorporateSignUp() {
                     id="state_select"
                     className="block pl-8 pr-3 text-black pb-2.5 pt-5 w-full text-base border border-[#6E6E6E] rounded-md appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0"
                     defaultValue=""
-                    {...register("district")}
+                    {...register("district", { required: true })}
                   >
                     <option value="" disabled hidden>
                       Select City
@@ -213,20 +212,19 @@ function CorporateSignUp() {
                       </option>
                     ))}
                   </select>
-                  <div className="flex absolute right-2 top-1/2 -translate-y-1/2 items-center justify-between">
-                    <img src={arrowDown} />
-                  </div>
+
                   <div
                     htmlFor="floating_filled"
                     className="absolute text-base text-[#1C4481] dark:text-[#1C4481] duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-2.5 peer-focus:text-[#1C4481] peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto flex items-center"
                   >
-                    <img src={close} alt="" className="h-5 w-5" />
+                    <img src={message} alt="" className="h-5 w-5" />
                     <label htmlFor="" className="pl-2">
                       City
                     </label>
                   </div>
                 </div>
               </div>
+
               <div className="flex justify-center items-center gap-2">
                 <input type="checkbox" />
                 <span className="font-semibold">
@@ -236,7 +234,7 @@ function CorporateSignUp() {
               <div>
                 <button
                   type="submit"
-                  className="w-full h-full border rounded-full bg-blue-900 py-2"
+                  className="w-full h-full border rounded-full text-white bg-[#1C4481] py-2"
                 >
                   Register
                 </button>

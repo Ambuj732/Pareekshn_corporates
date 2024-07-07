@@ -1,7 +1,7 @@
 import { PUBLIC_REST_API_ENDPOINT, BEARER_TOKEN } from "../../constants";
 import axios from "axios";
 
-const forgetPassword = async (data) => {
+const getBannerSample = async (data) => {
   try {
     const queryString = Object.keys(data)
       .map(
@@ -9,7 +9,7 @@ const forgetPassword = async (data) => {
       )
       .join("&");
     const response = await axios.post(
-      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/forgotPassword?${queryString}`,
+      `${PUBLIC_REST_API_ENDPOINT}/amsapi/corporate/getSampleBanners?${queryString}`,
       {},
       {
         headers: {
@@ -17,11 +17,12 @@ const forgetPassword = async (data) => {
         },
       }
     );
-    console.log("Forget password response :: ", response);
+    console.log("Banner Sample response :: ", response);
     return response;
   } catch (error) {
-    console.log("Error whiling forgetting password :: ", forgetPassword);
+    console.log("Error while logging in Banner Sample :: ", error);
+    throw error;
   }
 };
 
-export default forgetPassword;
+export default getBannerSample;
