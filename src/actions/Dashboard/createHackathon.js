@@ -4,7 +4,7 @@ import axios from "axios";
 const getCreateHackathon = async (data) => {
   try {
     //console.log(data);
-  /*  const file = data?.file;
+    /*  const file = data?.file;
     data.file = "";
     const formData = new FormData();
     formData.append("file", data?.file);

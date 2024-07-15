@@ -21,6 +21,7 @@ import getLanguageList from "../../actions/MasterDataApi/getLanguageList";
 import getCourses from "../../actions/MasterDataApi/getCourses";
 import getBannerSample from "../../actions/MasterDataApi/getBannerSample";
 import { useNavigate } from "react-router";
+import Editor from "react-simple-wysiwyg";
 
 const hours = [...Array(12).keys()].map((n) =>
   (n + 1).toString().padStart(2, "0")
@@ -29,7 +30,7 @@ const minutes = [...Array(60).keys()].map((n) => n.toString().padStart(2, "0"));
 const periods = ["AM", "PM"];
 
 function CreateHackathon() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [selectedState, setSelectedState] = useState("");
@@ -43,11 +44,18 @@ function CreateHackathon() {
   const [bannerfile, setBannerFile] = useState();
   const [logofile, setLogoFile] = useState();
   const [bannerData, setBannerData] = useState([]);
+  const [html, setHtml] = useState("");
+
   const handleBannerChange = (e) => {
     setBannerFile(e.target.files[0]);
   };
   const handleLogoChange = (e) => {
     setLogoFile(e.target.files[0]);
+  };
+
+  const onChange = (value) => {
+    setHtml(value);
+    setValue("description", value);
   };
 
   const preData = async () => {
@@ -169,8 +177,9 @@ function CreateHackathon() {
 
   const createHackathonHandler = async (formData) => {
     //console.log(formData);
-    const logoImage = await fileToBase64(logofile);
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const logoImage = await fileToBase64(logofile);
       const data = {
         exam_start_time: formData?.hackathonTime + ":00",
         paid: formData?.planType === "paid" ? 1 : 0,
@@ -209,13 +218,13 @@ function CreateHackathon() {
             id_hackthon: id_hackathon,
             usercode: user?.token,
             banner_description:
-              "description of banner. this is the baaner for this hackthon.",
+              "description of banner. this is the banner for this hackthon.",
             file: bannerImage,
           };
           //console.log(bannerData);
-          const res = await createBannerWeb(bannerData);
+          const response = await createBannerWeb(bannerData);
           //console.log(res);
-          if (response.status == 200) {
+          if (response?.status == 200) {
             const code = response?.data?.code;
             if (code == 1000) {
               setError("The hackathon has been created and banner uploaded.");
@@ -279,10 +288,11 @@ function CreateHackathon() {
               </span>
             </div>
             <form onSubmit={handleSubmit(createHackathonHandler)}>
-              <div className="flex flex-col gap-4">
-                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+              <div className="flex flex-col gap-6">
+                <div className="flex gap-10 justify-around px-5 mb-4">
+                  <div className="h-16 w-1/2">
+                    <span className="font-semibold ml-1">Add Title</span>
+                    <div className="w-full h-full flex gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="text"
@@ -292,15 +302,15 @@ function CreateHackathon() {
                       />
                     </div>
                   </div>
-                  <div className="h-16 w-1/2 border rounded-lg ">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className="h-16 w-1/2  ">
+                    <span className="font-semibold ml-1">Select Course</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <select
                         id_state="sector_select"
                         className=" outline-none w-[90%] mr-4 "
                         {...register("course", { required: true })}
                       >
-                        <option value="">Select Course</option>
                         {courses?.map((data) => (
                           <option key={data?.id} value={data.id}>
                             {data.course_name}
@@ -309,8 +319,9 @@ function CreateHackathon() {
                       </select>
                     </div>
                   </div>
-                  <div className="h-16 w-1/2 border rounded-lg ">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className="h-16 w-1/2  ">
+                    <span className="font-semibold ml-1">Date of Exam</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="date"
@@ -321,10 +332,10 @@ function CreateHackathon() {
                     </div>
                   </div>
                 </div>
-
-                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                <div className="flex gap-10 justify-around px-5 mt-4 mb-4">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">Exam Start Time</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="time"
@@ -334,8 +345,11 @@ function CreateHackathon() {
                       />
                     </div>
                   </div>
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">
+                      Passing Percentage
+                    </span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="Number"
@@ -345,8 +359,9 @@ function CreateHackathon() {
                       />
                     </div>
                   </div>
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">Negative</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img
                         src={twoperson}
                         alt="Two Person Icon"
@@ -356,7 +371,6 @@ function CreateHackathon() {
                         className=" outline-none w-[90%] mr-4 "
                         {...register("negative", { required: true })}
                       >
-                        <option value="">Negative</option>
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                       </select>
@@ -371,12 +385,12 @@ function CreateHackathon() {
                       type="radio"
                       value="free"
                       name="value"
-                      className="w-4 h-4 text-blue-600"
+                      className="w-6 h-6 text-blue-600"
                       {...register("planType", { required: true })}
                     />
                     <label
                       for="default-radio-1"
-                      className="ms-2 text-lg text-semibold"
+                      className="ms-2 text-xl text-semibold"
                     >
                       Free
                     </label>
@@ -387,22 +401,22 @@ function CreateHackathon() {
                       type="radio"
                       value="paid"
                       name="planType"
-                      className="w-4 h-4 text-blue-600"
+                      className="w-6 h-6 text-blue-600"
                       {...register("planType", { required: true })}
                     />
                     <label
                       for="default-radio-1"
-                      className="ms-2 text-lg text-semibold"
+                      className="ms-2 text-xl text-semibold"
                     >
                       Paid
                     </label>
                   </div>
                   {
-                    <div className="flex items-center justify-center ">
+                    <div className="flex  justify-center ">
                       <input
                         type="number "
                         placeholder="Rs. "
-                        className="px-7 no-spinner border-2 border-[#1C4481] w-full py-3 rounded-md bg-[#EBEBEB66] outline-none"
+                        className="px-7 no-spinner border-2  w-full py-3 rounded-md  outline-none"
                         {...register("amount", { required: true })}
                       />
                     </div>
@@ -415,8 +429,9 @@ function CreateHackathon() {
                 </div>
 
                 <div className="flex gap-10 justify-around px-5 mt-4 mb-4">
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">Banner Title</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={bannertitle} alt="" className="h-4 w-5 ml-4" />
                       <input
                         type="text"
@@ -427,10 +442,13 @@ function CreateHackathon() {
                     </div>
                   </div>
                   <div className="">
+                    <span className="font-semibold ml-1">Time</span>
+
                     <TimePicker setSelectedTime={setSelectedTime} />
                   </div>
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">Start Date</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="date"
@@ -442,9 +460,10 @@ function CreateHackathon() {
                   </div>
                 </div>
 
-                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                <div className="flex gap-10 justify-around px-5  mb-4">
+                  <div className=" h-16 w-1/2">
+                    <span className="font-semibold ml-1">Start Time</span>
+                    <div className="w-full h-full  flex  gap-4 items-center  border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="time"
@@ -455,8 +474,9 @@ function CreateHackathon() {
                     </div>
                   </div>
 
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">End Date</span>
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="date"
@@ -466,8 +486,10 @@ function CreateHackathon() {
                       />
                     </div>
                   </div>
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 items-center">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">End Time</span>
+
+                    <div className="w-full h-full  flex  gap-4 items-center border rounded-lg">
                       <img src={twoperson} alt="" className="h-5 w-5 ml-4" />
                       <input
                         type="time"
@@ -479,24 +501,29 @@ function CreateHackathon() {
                   </div>
                 </div>
 
-                <div className=" mt-2 mb-4 h-32 w-[97%] ">
-                  <textarea
+                <div className="mt-10 mb-4 h-32 w-[97%]">
+                  <Editor
+                    value={html}
+                    onChange={onChange}
+                    className="fixed z-50 px-5 border-none outline-none h-full"
+                  />
+                  {/* <textarea
                     placeholder="Add Description"
-                    className="  pl-2  pb-2.5 pt-5 text-base border focus:outline-none focus:ring-0 peer items-center mx-4 px-5 mt-2 mb-4 h-32 w-full rounded-lg"
+                    className="pl-2 pb-2.5 pt-5 text-base border focus:outline-none focus:ring-0 peer items-center mx-4 px-5 mt-2 mb-4 h-32 w-full rounded-lg"
                     {...register("description", { required: true })}
-                  ></textarea>
+                  ></textarea> */}
                 </div>
 
                 <span className="font-medium mt-3">Banner Image</span>
-                <div className="flex gap-10 justify-around px-5 mt-2 mb-4">
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 p-2">
-                      <img src={bannersize} alt="" className="h-4 w-5 ml-4" />
-                      <div className="flex flex-col w-full">
-                        <span className="text-sm text-[#1C4481]">
-                          Select Banner Size
-                        </span>
-                        <div className="flex justify-between w-full ">
+                <div className="flex gap-10 justify-around px-5 mt-2 ">
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">
+                      Select Banner Size
+                    </span>
+                    <div className="w-full h-full flex justify-center items-center gap-2 border rounded-lg p-2">
+                      <img src={bannersize} alt="" className="h-4 w-5" />
+                      <div className="flex w-full">
+                        <div className="flex  w-full ">
                           <select
                             id_state="banner-size-selection"
                             className=" outline-none w-full  "
@@ -511,32 +538,36 @@ function CreateHackathon() {
                       </div>
                     </div>
                   </div>
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex  gap-4 p-2 mt-2">
-                      <img src={attach} className="w-5 h-5 ml-4" />
-                      <div>
-                        <span className="text-gray-500 text-nowrap">
-                          Choose banner
-                        </span>
-                        <input
-                          type="file"
-                          id="attachment"
-                          onChange={(e) => handleBannerChange(e)}
-                          className=" opacity-0 w-full h-full cursor-pointer"
-                          accept="image/*"
-                          /* {...register("banner")} */
-                        />
+                  <div className="  h-28 w-1/2 flex flex-col">
+                    <div className=" h-full w-full flex flex-col ">
+                      <span className="font-semibold ml-1">Choose Banner</span>
+                      <div className="h-full w-full flex border rounded-lg justify-center items-center">
+                        <img src={attach} className="w-5 h-5 ml-4" />
+                        <div className="cursor-pointer ml-2">
+                          <input
+                            type="file"
+                            id="attachment"
+                            onChange={(e) => handleBannerChange(e)}
+                            className=" w-full h-full ml-2"
+                            accept="image/*"
+                            /* {...register("banner")} */
+                          />
+                        </div>
                       </div>
                     </div>
-                    <span className="text-[12px] text-[#848484]">
+                    <span className="text-[12px] mt-2 text-[#848484]">
                       Supported formats PNG, JPEG and File size max.5 mb
                     </span>
                   </div>
-                  <div className=" h-16 w-1/2 border rounded-lg">
-                    <div className="w-full h-full  flex items-center gap-4 p-2">
+
+                  <div className=" h-16 w-1/2 ">
+                    <span className="font-semibold ml-1">
+                      Download Sample Banner
+                    </span>
+                    <div className="w-full h-full  flex items-center gap-4 p-2 border rounded-lg">
                       <img src={bannersize} alt="" className="h-4 w-5 ml-4" />
                       <span className="text-sm text-[#1C4481] justify-between">
-                        Download Sample Banner
+                        Sample Banner
                       </span>
                     </div>
                   </div>
@@ -564,113 +595,131 @@ function CreateHackathon() {
                   ></textarea>
                 </div> */}
               </div>
-              <div className="flex gap-10 justify-around px-5 mt-10 mb-4">
-                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
-                  <select
-                    id_state="difficulty_select"
-                    className=" outline-none w-[90%] mr-4"
-                    defaultValue=""
-                    {...register("level", { required: true })}
-                  >
-                    <option value="">Select Level</option>
-                    {difficultyLevel?.map((data) => (
-                      <option key={data?.id} value={data.id}>
-                        {data.level_difficulty_name}
-                      </option>
-                    ))}
-                  </select>
-                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <div className="flex gap-10 justify-around px-5 mt-7 mb-4">
+                <div className="h-16 w-1/2">
+                  <span className="font-semibold ml-1">Select Level</span>
+                  <div className=" h-full w-full border rounded-lg flex items-center justify-center">
+                    <select
+                      id_state="difficulty_select"
+                      className=" outline-none w-[90%] mr-4"
+                      defaultValue=""
+                      {...register("level", { required: true })}
+                    >
+                      {difficultyLevel?.map((data) => (
+                        <option key={data?.id} value={data.id}>
+                          {data.level_difficulty_name}
+                        </option>
+                      ))}
+                    </select>
+                    {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div> */}
+                  </div>
                 </div>
-                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
-                  <select
-                    id_state="sector_select"
-                    className=" outline-none w-[90%] mr-4"
-                    // defaultValue=""
-                    {...register("sector", { required: true })}
-                  >
-                    <option value="">Select Sector</option>
-                    {sector?.map((data) => (
-                      <option key={data?.id_sector} value={data.id_sector}>
-                        {data.sector_name}
-                      </option>
-                    ))}
-                  </select>
-                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+
+                <div className="h-16 w-1/2">
+                  <span className="font-semibold ml-1">Select Sector</span>
+                  <div className=" h-16 w-full border rounded-lg flex items-center justify-center">
+                    <select
+                      id_state="sector_select"
+                      className=" outline-none w-[90%] mr-4"
+                      // defaultValue=""
+                      {...register("sector", { required: true })}
+                    >
+                      {sector?.map((data) => (
+                        <option key={data?.id_sector} value={data.id_sector}>
+                          {data.sector_name}
+                        </option>
+                      ))}
+                    </select>
+                    {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div> */}
+                  </div>
                 </div>
-                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
-                  <select
-                    id_state="language_select"
-                    className=" outline-none w-[90%] mr-4"
-                    {...register("language", { required: true })}
-                  >
-                    <option value="">Select Language</option>
-                    {language?.map((data) => (
-                      <option key={data?.id} value={data?.id}>
-                        {data.lang_name}
-                      </option>
-                    ))}
-                  </select>
-                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+
+                <div className="h-16 w-1/2">
+                  <span className="font-semibold ml-1">Select Language</span>
+                  <div className=" h-16 w-full border rounded-lg flex items-center justify-center">
+                    <select
+                      id_state="language_select"
+                      className=" outline-none w-[90%] mr-4"
+                      {...register("language", { required: true })}
+                    >
+                      {language?.map((data) => (
+                        <option key={data?.id} value={data?.id}>
+                          {data.lang_name}
+                        </option>
+                      ))}
+                    </select>
+                    {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div> */}
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-10 justify-around px-5 mt-10 mb-4">
-                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
-                  <select
-                    id_state="state_select"
-                    className=" outline-none w-[90%] mr-4"
-                    // defaultValue=""
-                    onChange={(e) => handleStateChange(e)}
-                  >
-                    <option value="">Select State</option>
-                    {states?.map((data) => (
-                      <option key={data?.id_state} value={data?.id_state}>
-                        {data.state}
-                      </option>
-                    ))}
-                  </select>
-                  {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+
+              <div className="flex gap-10 justify-around px-5 mt-16 mb-4">
+                <div className="h-16 w-1/2">
+                  <span className="font-semibold ml-1">Select State</span>
+                  <div className=" h-16 w-full border rounded-lg flex items-center justify-center">
+                    <select
+                      id_state="state_select"
+                      className=" outline-none w-[90%] mr-4"
+                      // defaultValue=""
+                      onChange={(e) => handleStateChange(e)}
+                    >
+                      {states?.map((data) => (
+                        <option key={data?.id_state} value={data?.id_state}>
+                          {data.state}
+                        </option>
+                      ))}
+                    </select>
+                    {/* <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                     <img src={arrowDown} alt="Arrow Down" className="h-4 w-4" />
                   </div> */}
+                  </div>
                 </div>
-                <div className=" h-16 w-1/2 border rounded-lg flex items-center justify-center">
-                  <select
-                    id_state="level_select"
-                    className=" outline-none w-[90%] mr-4"
-                    // defaultValue=""
-                    {...register("district", { required: true })}
-                  >
-                    <option value="">Select City</option>
-                    {districts?.map((district) => (
-                      <option key={district?.id_city} value={district.id_city}>
-                        {district?.city}
-                      </option>
-                    ))}
-                  </select>
+
+                <div className="h-16 w-1/2">
+                  <span className="font-semibold ml-1">Select City</span>
+                  <div className=" h-16 w-full border rounded-lg flex items-center justify-center">
+                    <select
+                      id_state="level_select"
+                      className=" outline-none w-[90%] mr-4"
+                      // defaultValue=""
+                      {...register("district", { required: true })}
+                    >
+                      {districts?.map((district) => (
+                        <option
+                          key={district?.id_city}
+                          value={district.id_city}
+                        >
+                          {district?.city}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div className=" h-16 w-1/2 border rounded-lg">
-                  <div className="w-full h-full  flex  gap-4 p-2 mt-2">
-                    <img src={attach} className="w-5 h-5 ml-4" />
-                    <div>
-                      <span className="text-gray-500 text-nowrap">
-                        Upload Company Logo
-                      </span>
-                      <input
-                        type="file"
-                        id="logo_file"
-                        onChange={(e) => handleLogoChange(e)}
-                        className=" opacity-0 w-full h-full cursor-pointer"
-                        accept="image/*"
-                        /* {...register("companyLogo")} */
-                      />
+
+                <div className="  h-28 w-1/2 flex flex-col">
+                  <div className=" h-full w-full flex flex-col ">
+                    <span className="font-semibold ml-1">Choose Banner</span>
+                    <div className="h-full w-full flex border rounded-lg justify-center items-center cursor-pointer">
+                      <img src={attach} className="w-5 h-5 ml-4" />
+                      <div className="cursor-pointer ml-2">
+                        <input
+                          type="file"
+                          id="attachment"
+                          onChange={(e) => handleBannerChange(e)}
+                          className=" w-full h-full ml-2 cursor-pointer"
+                          accept="image/*"
+                          /* {...register("banner")} */
+                        />
+                      </div>
                     </div>
                   </div>
-                  <span className="text-[12px] text-[#848484]">
+                  <span className="text-[12px] mt-2 text-[#848484]">
                     Supported formats PNG, JPEG and File size max.5 mb
                   </span>
                 </div>

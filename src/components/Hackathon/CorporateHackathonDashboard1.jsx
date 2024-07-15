@@ -28,6 +28,7 @@ import completedHackathon from "../../actions/Hackathon/completedHackathon";
 import upComingHackathon from "../../actions/Hackathon/upComingHackathon";
 import CreateHackathon from "./CreateHackathon";
 import { useNavigate } from "react-router";
+
 function CorporateHackathonDashboard1() {
   const [loginData, setLoginData] = useState({});
   const [hackathonStaticData, setHackathonStaticData] = useState({});
@@ -80,7 +81,7 @@ function CorporateHackathonDashboard1() {
       const user = JSON.parse(localStorage.getItem("user"));
       console.log("User :: ", user);
       const data = {
-        usercode: user?.usercode,
+        usercode: user?.token,
         id_corp: 2,
         status: 0,
       };
@@ -100,9 +101,9 @@ function CorporateHackathonDashboard1() {
       const user = JSON.parse(localStorage.getItem("user"));
       console.log("User :: ", user);
       const data = {
-        usercode: user?.usercode,
+        usercode: user?.token,
         id_corp: 2,
-        status: 1,
+        status: 3,
       };
       const response = await upComingHackathon(data);
       console.log("completed data", response);
